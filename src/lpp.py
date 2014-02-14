@@ -1,4 +1,5 @@
 #!/usr/bin/env python
+
 oneline = "writing pp-data in vtk format automatically, saving memory"
 
 docstr = """this is the docstr of LIGGGHTSPostProcessing"""
