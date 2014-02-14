@@ -1,12 +1,3 @@
-to install *liggghts post processing* (lpp) execute the following 
+to install *liggghts post processing* (lpp) and pizza.py execute
+
 ./install.sh
-
-
-
-
-to install *pizza.py* copy the following lines of code 
-into your bashrc (please change the variable CFDEM_lppPath according 
-to your system):
-
-CFDEM_pizzaPath=/Users/s/work/parallelpizza/nightly_build
-alias pizza  ="python -i $CFDEM_pizzaPath/src/pizza.py"
