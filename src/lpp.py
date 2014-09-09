@@ -74,7 +74,16 @@ class lpp:
     if self.debugMode: print "number of process:", os.getpid()
     
     # check whether file-list is nonempty
-    self.flist = list[0]
+    self.flist = []
+    # get file list for windows
+    if os.name == 'nt':
+      for item in list[0]:
+        if '*' in item: # interpret wildcard with glob()
+          self.flist = self.flist + glob.glob(list[0][0])
+        else:
+          self.flist = self.flist + [item]
+    else: # unix: the input should be a valid list
+      self.flist = list[0]
     listlen = len(self.flist)
     if listlen == 0 and len(list) == 1:
       raise StandardError, "no dump file specified"
