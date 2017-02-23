@@ -313,7 +313,7 @@ def particleGran(file,atoms,names,n_values):
   f = open(file,"w")
   
   # if no atoms are present
-  if atoms == None:
+  if atoms is None:
     atoms = []
   
   # find indices of scalars and vectors
