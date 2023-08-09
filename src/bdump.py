@@ -3,7 +3,7 @@
 #
 # Copyright (2005) Sandia Corporation.  Under the terms of Contract
 # DE-AC04-94AL85000 with Sandia Corporation, the U.S. Government retains
-# certain rights in this software.  This software is distributed under 
+# certain rights in this software.  This software is distributed under
 # the GNU General Public License.
 
 # bdump tool
@@ -12,14 +12,14 @@ oneline = "Read dump files with bond info"
 
 docstr = """
 b = bdump("dump.one")             read in one or more dump files
-b = bdump("dump.1 dump.2.gz")	  can be gzipped
-b = bdump("dump.*")		  wildcard expands to multiple files
-b = bdump("dump.*",0)		  two args = store filenames, but don't read
+b = bdump("dump.1 dump.2.gz")     can be gzipped
+b = bdump("dump.*")               wildcard expands to multiple files
+b = bdump("dump.*",0)             two args = store filenames, but don't read
 
   incomplete and duplicate snapshots are deleted
   no column name assignment is performed
 
-time = b.next()             	  read next snapshot from dump files
+time = b.next()                   read next snapshot from dump files
 
   used with 2-argument constructor to allow reading snapshots one-at-a-time
   snapshot will be skipped only if another snapshot has same time stamp
@@ -93,7 +93,7 @@ class bdump:
     for word in words: self.flist += glob.glob(word)
     if len(self.flist) == 0 and len(list) == 1:
       raise StandardError,"no bdump file specified"
-    
+
     if len(list) == 1:
       self.increment = 0
       self.read_all()
@@ -148,15 +148,15 @@ class bdump:
       snap = self.read_snapshot(f)
       if not snap:
         self.nextfile += 1
-	if self.nextfile == len(self.flist): return -1
+        if self.nextfile == len(self.flist): return -1
         f.close()
-	self.eof = 0
-	continue
+        self.eof = 0
+        continue
       self.eof = f.tell()
       f.close()
       try:
         self.findtime(snap.time)
-	continue
+        continue
       except: break
 
     self.snaps.append(snap)
@@ -170,7 +170,7 @@ class bdump:
   # return snapshot or 0 if failed
   # assign column names if not already done and file is self-describing
   # convert xs,xu to x
-  
+
   def read_snapshot(self,f):
     try:
       snap = Snap()
@@ -202,7 +202,7 @@ class bdump:
 
   # --------------------------------------------------------------------
   # map atom column names
-  
+
   def map(self,*pairs):
     if len(pairs) % 2 != 0:
       raise StandardError, "bdump map() requires pairs of mappings"
@@ -242,7 +242,7 @@ class bdump:
         del self.snaps[i]
       else:
         i += 1
-  
+
   # --------------------------------------------------------------------
   # return list of bonds to viz for snapshot isnap
   # if called with flag, then index is timestep, so convert to snapshot index
@@ -267,7 +267,7 @@ class bdump:
 
     # create line list from id,type,atom1,atom2
     # abs() of type since could be negative
-    
+
     bonds = []
     for i in xrange(snap.natoms):
       atom = snap.atoms[i]

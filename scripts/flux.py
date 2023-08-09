@@ -1,4 +1,4 @@
-#!/usr/bin/python 
+#!/usr/bin/python
 
 # Script:  flux.py
 # Purpose: flux of atoms through a user-defined plane
@@ -41,38 +41,38 @@ flag = 0
 while 1:
   which,time,flag = d.iterator(flag)
   if flag == -1: break
-  
+
   if direction == "x":
     id,type,x = d.vecs(time,"id","type","x")
     lo = d.snaps[which].xlo
     hi = d.snaps[which].xhi
   elif direction == "y":
     id,type,x = d.vecs(time,"id","type","y")
-    lo = d.snaps[which].ylo       
-    hi = d.snaps[which].yhi       
-  elif direction == "z":   
+    lo = d.snaps[which].ylo
+    hi = d.snaps[which].yhi
+  elif direction == "z":
     id,type,x = d.vecs(time,"id","type","z")
-    lo = d.snaps[which].zlo       
-    hi = d.snaps[which].zhi       
-  
-  prd = hi - lo                
-  plane = lo + scaled_plane*prd          
-  
+    lo = d.snaps[which].zlo
+    hi = d.snaps[which].zhi
+
+  prd = hi - lo
+  plane = lo + scaled_plane*prd
+
   print time,
   sys.stdout.flush()
-    
+
   natoms = len(x)
   if jconfig == 0: x_initial = (natoms+1) * [0]
   jconfig += 1
 
   typeflux = ntypes * [0]
-      
+
   for i in xrange(natoms):
     id[i] = int(id[i])
     type[i] = int(type[i])
     if jconfig == 1: x_initial[id[i]] = x[i]
     if x_initial[id[i]] < plane and x[i] > plane :
-       crossings = int((x[i] - plane)/prd) + 1 
+       crossings = int((x[i] - plane)/prd) + 1
        typeflux[type[i]] += crossings
     elif x_initial[id[i]] > plane and x[i] < plane :
        crossings = int((plane - x[i])/prd) + 1
@@ -83,5 +83,5 @@ while 1:
     print >>f,typeflux[j+1],
   print >>f
 print
-  
+
 f.close()

@@ -1,6 +1,6 @@
-#!/usr/bin/python 
+#!/usr/bin/python
 
-# Script:  bond_distribute.py 
+# Script:  bond_distribute.py
 # Purpose: binned bond length distributions by bond type
 # Syntax:  bond_distribute.py datafile nbin rmin rmax outfile files ...
 #          datafile = lammps data file
@@ -25,7 +25,7 @@ if len(argv) < 7:
   raise StandardError, \
    "Syntax: bond_distribute.py datafile nbin rmin rmax outfile files ..."
 
-dt = data(argv[1])	
+dt = data(argv[1])
 nbins = int(argv[2])
 rmin = float(argv[3])
 rmax = float(argv[4])
@@ -49,8 +49,8 @@ for i in xrange(nbonds): ntypes = max(bond[i][1],ntypes)
 ntypes = int(ntypes)
 ncount = ntypes * [0]
 bin = nbins * [0]
-for i in xrange(nbins): 
-  bin[i] = ntypes * [0] 
+for i in xrange(nbins):
+  bin[i] = ntypes * [0]
 
 # read snapshots one-at-a-time
 
@@ -60,24 +60,24 @@ d.map(1,"id",2,"type",3,"x",4,"y",5,"z")
 while 1:
   time = d.next()
   if time == -1: break
-   
+
   box = (d.snaps[-1].xlo,d.snaps[-1].ylo,d.snaps[-1].zlo,
          d.snaps[-1].xhi,d.snaps[-1].yhi,d.snaps[-1].zhi)
-         
+
   xprd = box[3] - box[0]
-  yprd = box[4] - box[1] 
+  yprd = box[4] - box[1]
   zprd = box[5] - box[2]
-  
-  d.unscale() 
+
+  d.unscale()
   d.sort()
   x,y,z = d.vecs(time,"x","y","z")
-   
+
   for i in xrange(nbonds):
-  
+
     delx = x[jatom[i]] - x[iatom[i]]
     dely = y[jatom[i]] - y[iatom[i]]
     delz = z[jatom[i]] - z[iatom[i]]
-        
+
     if abs(delx) > 0.5*xprd:
       if delx < 0.0:
         delx += xprd
@@ -93,30 +93,30 @@ while 1:
         delz += zprd
       else:
         delz -= zprd
-        
+
     r = sqrt(delx*delx + dely*dely + delz*delz)
-    
+
     ibin = int(nbins*(r - rmin)/(rmax - rmin) + 0.5)
-    if ((ibin >= 0) and (ibin <= nbins-1)): 
+    if ((ibin >= 0) and (ibin <= nbins-1)):
       bin[ibin][btype[i]] += nbins
       ncount[btype[i]] += 1
     else:
       print "Warning: bond distance outside specified range"
       print "Bond type:", btype[i]+1
       print "Bond number:", i
-  print time,    
-      
+  print time,
+
 print
 print "Printing bond distance normalized distribution to",outfile
-    
+
 fp = open(outfile,"w")
 rrange = rmax - rmin
 for i in xrange(nbins):
-  print >>fp, rmin + rrange*float(i)/float(nbins), 
+  print >>fp, rmin + rrange*float(i)/float(nbins),
   for j in xrange(ntypes):
     if (ncount[j] > 0):
       print >>fp, float(bin[i][j])/float(ncount[j])/rrange,
     else:
-      print >>fp, 0.0,    
-  print >>fp 
+      print >>fp, 0.0,
+  print >>fp
 fp.close()

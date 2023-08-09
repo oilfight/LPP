@@ -3,7 +3,7 @@
 #
 # Copyright (2005) Sandia Corporation.  Under the terms of Contract
 # DE-AC04-94AL85000 with Sandia Corporation, the U.S. Government retains
-# certain rights in this software.  This software is distributed under 
+# certain rights in this software.  This software is distributed under
 # the GNU General Public License.
 
 # pair tool
@@ -15,15 +15,15 @@ p = pair("lj/charmm/coul/charmm")   create pair object for specific pair style
 
   available styles: lj/cut, lj/cut/coul/cut, lj/charmm/coul/charmm
 
-p.coeff(d)			    extract pairwise coeffs from data object
-p.init(cut1,cut2,...)		    setup based on coeffs and cutoffs
+p.coeff(d)                          extract pairwise coeffs from data object
+p.init(cut1,cut2,...)               setup based on coeffs and cutoffs
 
   init args are specific to pair style:
     lj/cut = cutlj
     lj/cut/coul/cut = cutlj,cut_coul (cut_coul optional)
     lj/charmm/coul/charmm = cutlj_inner,cutlj,cutcoul_inner,cut_coul
       (last 2 optional)
-      
+
 e_vdwl,e_coul = p.single(rsq,itype,jtype,q1,q2,...)   compute LJ/Coul energy
 
   pairwise energy between 2 atoms at distance rsq with their attributes
@@ -96,9 +96,9 @@ class pair:
     epsilon = data.get("Pair Coeffs",2)
     sigma = data.get("Pair Coeffs",3)
     ntypes = len(epsilon)
-    
+
     self.lj3 = []
-    self.lj4 = []     
+    self.lj4 = []
     for i in xrange(ntypes):
       self.lj3.append(ntypes * [0])
       self.lj4.append(ntypes * [0])
@@ -107,7 +107,7 @@ class pair:
         sigma_ij = sqrt(sigma[i]*sigma[j])
         self.lj3[i][j] = 4.0 * epsilon_ij * pow(sigma_ij,12.0);
         self.lj4[i][j] = 4.0 * epsilon_ij * pow(sigma_ij,6.0);
-  
+
   # --------------------------------------------------------------------
   # args = cutlj
 
@@ -117,20 +117,20 @@ class pair:
 
   # --------------------------------------------------------------------
   # args = rsq,itype,jtype
-  
+
   def single_lj_cut(self,list):
     rsq = list[0]
     itype = list[1]
     jtype = list[2]
-    
+
     r2inv = 1.0/rsq
-    
+
     if rsq < self.cut_ljsq:
       r6inv = r2inv*r2inv*r2inv
       eng_vdwl = r6inv*(self.lj3[itype][jtype]*r6inv-self.lj4[itype][jtype])
     else: eng_vdwl = 0.0
-      
-    return eng_vdwl 
+
+    return eng_vdwl
 
   # --------------------------------------------------------------------
   # --------------------------------------------------------------------
@@ -140,9 +140,9 @@ class pair:
     epsilon = data.get("Pair Coeffs",2)
     sigma = data.get("Pair Coeffs",3)
     ntypes = len(epsilon)
-    
+
     self.lj3 = []
-    self.lj4 = []     
+    self.lj4 = []
     for i in xrange(ntypes):
       self.lj3.append(ntypes * [0])
       self.lj4.append(ntypes * [0])
@@ -151,41 +151,41 @@ class pair:
         sigma_ij = sqrt(sigma[i]*sigma[j])
         self.lj3[i][j] = 4.0 * epsilon_ij * pow(sigma_ij,12.0);
         self.lj4[i][j] = 4.0 * epsilon_ij * pow(sigma_ij,6.0);
-  
+
   # --------------------------------------------------------------------
   # args = cutlj, cut_coul (cut_coul optional)
 
   def init_lj_cut_coul_cut(self,list):
-    self.qqr2e = 332.0636  			# convert energy to kcal/mol
+    self.qqr2e = 332.0636                       # convert energy to kcal/mol
     cut_lj = list[0]
     self.cut_ljsq = cut_lj*cut_lj
-    
+
     if len(list) == 1: cut_coul = cut_lj
     else: cut_coul = list[1]
     self.cut_coulsq = cut_coul*cut_coul
 
   # --------------------------------------------------------------------
   # args = rsq,itype,jtype,q1,q2
-  
+
   def single_lj_cut_coul_cut(self,list):
     rsq = list[0]
     itype = list[1]
     jtype = list[2]
     q1 = list[3]
     q2 = list[4]
-    
+
     r2inv = 1.0/rsq
-    
+
     if rsq < self.cut_coulsq: eng_coul = self.qqr2e * q1*q2*sqrt(r2inv)
     else: eng_coul = 0.0
-    
+
     if rsq < self.cut_ljsq:
       r6inv = r2inv*r2inv*r2inv
       eng_vdwl = r6inv*(self.lj3[itype][jtype]*r6inv-self.lj4[itype][jtype])
     else: eng_vdwl = 0.0
-      
-    return eng_coul,eng_vdwl   
-  
+
+    return eng_coul,eng_vdwl
+
   # --------------------------------------------------------------------
   # --------------------------------------------------------------------
   # lj/charmm/coul/charmm methods
@@ -194,9 +194,9 @@ class pair:
     epsilon = data.get("Pair Coeffs",2)
     sigma = data.get("Pair Coeffs",3)
     ntypes = len(epsilon)
-    
+
     self.lj3 = []
-    self.lj4 = []     
+    self.lj4 = []
     for i in xrange(ntypes):
       self.lj3.append(ntypes * [0])
       self.lj4.append(ntypes * [0])
@@ -205,18 +205,18 @@ class pair:
         sigma_ij = 0.5 * (sigma[i] + sigma[j])
         self.lj3[i][j] = 4.0 * epsilon_ij * pow(sigma_ij,12.0);
         self.lj4[i][j] = 4.0 * epsilon_ij * pow(sigma_ij,6.0);
-  
+
   # --------------------------------------------------------------------
   # args = cutlj_inner,cutlj,cutcoul_inner,cut_coul (last 2 optional)
 
   def init_lj_charmm_coul_charmm(self,list):
-    self.qqr2e = 332.0636  			# convert energy to kcal/mol
+    self.qqr2e = 332.0636                       # convert energy to kcal/mol
     cut_lj_inner = list[0]
     cut_lj = list[1]
 
     self.cut_lj_innersq = cut_lj_inner*cut_lj_inner
     self.cut_ljsq = cut_lj*cut_lj
-    
+
     if len(list) == 2:
       cut_coul_inner = cut_lj_inner
       cut_coul = cut_lj
@@ -235,16 +235,16 @@ class pair:
 
   # --------------------------------------------------------------------
   # args = rsq,itype,jtype,q1,q2
-  
+
   def single_lj_charmm_coul_charmm(self,list):
     rsq = list[0]
     itype = list[1]
     jtype = list[2]
     q1 = list[3]
     q2 = list[4]
-    
+
     r2inv = 1.0/rsq
-    
+
     if rsq < self.cut_coulsq:
       eng_coul = self.qqr2e * q1*q2*sqrt(r2inv)
       if rsq > self.cut_coul_innersq:
@@ -253,7 +253,7 @@ class pair:
                   self.denom_coul
         eng_coul *= switch1
     else: eng_coul = 0.0
-    
+
     if rsq < self.cut_ljsq:
       r6inv = r2inv*r2inv*r2inv
       eng_vdwl = r6inv*(self.lj3[itype][jtype]*r6inv-self.lj4[itype][jtype])
@@ -263,5 +263,5 @@ class pair:
                   self.denom_lj
         eng_vdwl *= switch1
     else: eng_vdwl = 0.0
-      
+
     return eng_coul,eng_vdwl

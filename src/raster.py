@@ -3,7 +3,7 @@
 #
 # Copyright (2005) Sandia Corporation.  Under the terms of Contract
 # DE-AC04-94AL85000 with Sandia Corporation, the U.S. Government retains
-# certain rights in this software.  This software is distributed under 
+# certain rights in this software.  This software is distributed under
 # the GNU General Public License.
 
 # raster tool
@@ -16,8 +16,8 @@ r = raster(d)               create Raster3d wrapper for data in d
   d = atom snapshot object (dump, data)
 
 r.bg("black")               set background color (def = "black")
-r.size(N)		    set image size to NxN
-r.size(N,M)		    set image size to NxM
+r.size(N)                   set image size to NxN
+r.size(N,M)                 set image size to NxM
 r.rotate(60,135)            view from z theta and azimuthal phi (def = 60,30)
 r.shift(x,y)                translate by x,y pixels in view window (def = 0,0)
 r.zoom(0.5)                 scale image by factor (def = 1)
@@ -27,7 +27,7 @@ r.box(0/1/2,"red",4)        set box edge thickness
 r.file = "image"            file prefix for created images (def = "image")
 
 r.show(N)                   show image of snapshot at timestep N
-  
+
 r.all()                     make images of all selected snapshots
 r.all(P)                    images of all, start file label at P
 r.all(N,M,P)                make M images of snapshot N, start label at P
@@ -40,18 +40,18 @@ r.pan()                         no pan during all() (default)
 
 r.select = "$x > %g*3.0"    string to pass to d.aselect.test() during all()
 r.select = ""               no extra aselect (default)
-				
+
   %g varies from 0.0 to 1.0 from beginning to end of all()
 
 r.label(x,y,"h",size,"red","This is a label")    add label to each image
 r.nolabel()                                      delete all labels
-  
+
   x,y coords = -0.5 to 0.5, "h" or "t" for Helvetica or Times font
   size = fontsize (e.g. 10), "red" = color of text
-  
-r.acol(2,"green")		   set atom colors by atom type (1-N)
-r.acol([2,4],["red","blue"])	   1st arg = one type or list of types
-r.acol(0,"blue")	           2nd arg = one color or list of colors
+
+r.acol(2,"green")                  set atom colors by atom type (1-N)
+r.acol([2,4],["red","blue"])       1st arg = one type or list of types
+r.acol(0,"blue")                   2nd arg = one color or list of colors
 r.acol(range(20),["red","blue"])   if list lengths unequal, interpolate
 r.acol(range(10),"loop")           assign colors in loop, randomly ordered
 
@@ -61,23 +61,23 @@ r.acol(range(10),"loop")           assign colors in loop, randomly ordered
 
 r.arad([1,2],[0.5,0.3])            set atom radii, same rules as acol()
 
-r.bcol()			   set bond color, same args as acol()
-r.brad()			   set bond thickness, same args as arad()
+r.bcol()                           set bond color, same args as acol()
+r.brad()                           set bond thickness, same args as arad()
 
-r.tcol()			   set triangle color, same args as acol()
-r.tfill()			   set triangle fill, 0 fill, 1 line, 2 both
+r.tcol()                           set triangle color, same args as acol()
+r.tfill()                          set triangle fill, 0 fill, 1 line, 2 both
 
 r.lcol()                           set line color, same args as acol()
 r.lrad()                           set line thickness, same args as arad()
 
 r.adef()                           set atom/bond/tri/line properties to default
-r.bdef()			   default = "loop" for colors, 0.45 for radii
-r.tdef()  			   default = 0.25 for bond/line thickness
-r.ldef()  			   default = 0 fill
+r.bdef()                           default = "loop" for colors, 0.45 for radii
+r.tdef()                           default = 0.25 for bond/line thickness
+r.ldef()                           default = 0 fill
 
   by default 100 types are assigned
   if atom/bond/tri/line has type > # defined properties, is an error
-  
+
 from vizinfo import colors         access color list
 print colors                       list defined color names and RGB values
 colors["nickname"] = [R,G,B]       set new RGB values from 0 to 255
@@ -136,7 +136,7 @@ class raster:
     self.scale = 1.0
     self.xshift = self.yshift = 0
     self.eye = 50.0
-    
+
     self.file = "image"
     self.boxflag = 0
     self.bxcol = [1,1,0]
@@ -158,14 +158,14 @@ class raster:
     from vizinfo import colors
     self.bgcol = [colors[color][0]/255.0,colors[color][1]/255.0,
                   colors[color][2]/255.0]
-  
+
   # --------------------------------------------------------------------
 
   def size(self,xnew,ynew=None):
     self.xpixels = xnew
     if not ynew: self.ypixels = self.xpixels
     else: self.ypixels = ynew
-        
+
   # --------------------------------------------------------------------
 
   def rotate(self,ztheta,azphi):
@@ -182,7 +182,7 @@ class raster:
 
   def zoom(self,scale):
     self.scale = scale;
-  
+
   # --------------------------------------------------------------------
 
   def box(self,*args):
@@ -195,7 +195,7 @@ class raster:
 
   # --------------------------------------------------------------------
   # scale down point-size by 3x
-  
+
   def label(self,x,y,font,point,color,text):
     from vizinfo import colors
     scaledcolor = [colors[color][0]/255.0,colors[color][1]/255.0,
@@ -207,12 +207,12 @@ class raster:
 
   def nolabel(self):
     self.labels = []
-  
+
   # --------------------------------------------------------------------
   # show a single snapshot
   # distance from snapshot box or max box for all selected steps
   # always pre-call single() to re-center simulation data
-  
+
   def show(self,ntime):
     data = self.data
     which = data.findtime(ntime)
@@ -227,7 +227,7 @@ class raster:
     self.xtrans = float(nums[0][0])
     self.ytrans = float(nums[0][1])
     self.ztrans = float(nums[0][2])
-    
+
     self.single(0,self.file,box,atoms,bonds,tris,lines)
     cmd = "%s %s.png" % (PIZZA_DISPLAY,self.file)
     commands.getoutput(cmd)
@@ -244,7 +244,7 @@ class raster:
       self.ztheta_stop = list[3]
       self.azphi_stop = list[4]
       self.scale_stop = list[5]
-      
+
   # --------------------------------------------------------------------
 
   def all(self,*list):
@@ -275,7 +275,7 @@ class raster:
         if flag == -1: break
 
         fraction = float(i) / (ncount-1)
-        
+
         if self.select != "":
           newstr = self.select % fraction
           data.aselect.test(newstr,time)
@@ -297,9 +297,9 @@ class raster:
           self.scale = self.scale_start + \
                           fraction*(self.scale_stop - self.scale_start)
 
-	if n == nstart or self.panflag:
+        if n == nstart or self.panflag:
           self.xtrans = self.ytrans = self.ztrans = 0.0
-	  output = self.single(1,file,box,atoms,bonds,tris,lines)
+          output = self.single(1,file,box,atoms,bonds,tris,lines)
           nums = re.findall("translation to:\s*(\S*)\s*(\S*)\s*(\S*)\s",output)
           self.xtrans = float(nums[0][0])
           self.ytrans = float(nums[0][1])
@@ -344,14 +344,14 @@ class raster:
           self.scale = self.scale_start + \
                           fraction*(self.scale_stop - self.scale_start)
 
-	if n == nstart or self.panflag:
+        if n == nstart or self.panflag:
           self.xtrans = self.ytrans = self.ztrans = 0.0
-	  output = self.single(1,file,box,atoms,bonds,tris,lines)
+          output = self.single(1,file,box,atoms,bonds,tris,lines)
           nums = re.findall("translation to:\s*(\S*)\s*(\S*)\s*(\S*)\s",output)
           self.xtrans = float(nums[0][0])
           self.ytrans = float(nums[0][1])
           self.ztrans = float(nums[0][2])
-        
+
         self.single(0,file,box,atoms,bonds,tris,lines)
         print n,
         sys.stdout.flush()
@@ -379,7 +379,7 @@ class raster:
     # draw box if boxflag or flag is set
     # flag = 1 is a pre-call of single to set frame size correctly
     #   this keeps the view fixed even if atoms move around
-    
+
     if self.boxflag or flag: box_write(f,box,self.bxcol,self.bxthick)
 
     ncolor = self.vizinfo.nacolor
@@ -421,7 +421,7 @@ class raster:
       if itype > ncolor: raise StandardError,"line type too big"
       color = self.vizinfo.lcolor[itype]
       thick = self.vizinfo.lrad[itype]
-      print >>f,3  
+      print >>f,3
       print >>f,line[2],line[3],line[4],thick, \
                 line[5],line[6],line[7],thick,color[0],color[1],color[2]
 
@@ -432,7 +432,7 @@ class raster:
       print >>f,11
       print >>f,label[0],label[1],0.0,label[5][0],label[5][1],label[5][2]
       print >>f,label[6]
-      
+
     f.close()
 
     if len(self.labels) == 0:
@@ -448,45 +448,45 @@ class raster:
   def adef(self):
     self.vizinfo.setcolors("atom",range(100),"loop")
     self.vizinfo.setradii("atom",range(100),0.45)
- 
+
   # --------------------------------------------------------------------
 
   def bdef(self):
     self.vizinfo.setcolors("bond",range(100),"loop")
     self.vizinfo.setradii("bond",range(100),0.25)
-    
+
   # --------------------------------------------------------------------
 
   def tdef(self):
-    self.vizinfo.setcolors("tri",range(100),"loop")  
-    self.vizinfo.setfills("tri",range(100),0)  
+    self.vizinfo.setcolors("tri",range(100),"loop")
+    self.vizinfo.setfills("tri",range(100),0)
 
   # --------------------------------------------------------------------
 
   def ldef(self):
-    self.vizinfo.setcolors("line",range(100),"loop")  
+    self.vizinfo.setcolors("line",range(100),"loop")
     self.vizinfo.setradii("line",range(100),0.25)
-   
+
   # --------------------------------------------------------------------
 
   def acol(self,atypes,colors):
     self.vizinfo.setcolors("atom",atypes,colors)
-    
+
   # --------------------------------------------------------------------
 
   def arad(self,atypes,radii):
-    self.vizinfo.setradii("atom",atypes,radii)  
-    
+    self.vizinfo.setradii("atom",atypes,radii)
+
   # --------------------------------------------------------------------
 
   def bcol(self,btypes,colors):
     self.vizinfo.setcolors("bond",btypes,colors)
-  
+
   # --------------------------------------------------------------------
 
   def brad(self,btypes,radii):
     self.vizinfo.setradii("bond",btypes,radii)
-  
+
   # --------------------------------------------------------------------
 
   def tcol(self,ttypes,colors):
@@ -525,34 +525,34 @@ def box_write(f,box,color,thick):
   red = color[0]
   green = color[1]
   blue = color[2]
-  
-  print >>f,"3\n%g %g %g %g %g %g %g %g %g %g %g" % \
-  	      (xlo,ylo,zlo,thick,xhi,ylo,zlo,thick,red,green,blue)
-  print >>f,"3\n%g %g %g %g %g %g %g %g %g %g %g" % \
-	      (xlo,yhi,zlo,thick,xhi,yhi,zlo,thick,red,green,blue)
-  print >>f,"3\n%g %g %g %g %g %g %g %g %g %g %g" % \
-	      (xlo,ylo,zhi,thick,xhi,ylo,zhi,thick,red,green,blue)
-  print >>f,"3\n%g %g %g %g %g %g %g %g %g %g %g" % \
-	      (xlo,yhi,zhi,thick,xhi,yhi,zhi,thick,red,green,blue)
 
   print >>f,"3\n%g %g %g %g %g %g %g %g %g %g %g" % \
-	      (xlo,ylo,zlo,thick,xlo,yhi,zlo,thick,red,green,blue)
+              (xlo,ylo,zlo,thick,xhi,ylo,zlo,thick,red,green,blue)
   print >>f,"3\n%g %g %g %g %g %g %g %g %g %g %g" % \
-	      (xhi,ylo,zlo,thick,xhi,yhi,zlo,thick,red,green,blue)
+              (xlo,yhi,zlo,thick,xhi,yhi,zlo,thick,red,green,blue)
   print >>f,"3\n%g %g %g %g %g %g %g %g %g %g %g" % \
-	      (xlo,ylo,zhi,thick,xlo,yhi,zhi,thick,red,green,blue)
+              (xlo,ylo,zhi,thick,xhi,ylo,zhi,thick,red,green,blue)
   print >>f,"3\n%g %g %g %g %g %g %g %g %g %g %g" % \
-	      (xhi,ylo,zhi,thick,xhi,yhi,zhi,thick,red,green,blue)
+              (xlo,yhi,zhi,thick,xhi,yhi,zhi,thick,red,green,blue)
 
   print >>f,"3\n%g %g %g %g %g %g %g %g %g %g %g" % \
-	      (xlo,ylo,zlo,thick,xlo,ylo,zhi,thick,red,green,blue)
+              (xlo,ylo,zlo,thick,xlo,yhi,zlo,thick,red,green,blue)
   print >>f,"3\n%g %g %g %g %g %g %g %g %g %g %g" % \
-	      (xhi,ylo,zlo,thick,xhi,ylo,zhi,thick,red,green,blue)
+              (xhi,ylo,zlo,thick,xhi,yhi,zlo,thick,red,green,blue)
   print >>f,"3\n%g %g %g %g %g %g %g %g %g %g %g" % \
-	      (xlo,yhi,zlo,thick,xlo,yhi,zhi,thick,red,green,blue)
+              (xlo,ylo,zhi,thick,xlo,yhi,zhi,thick,red,green,blue)
   print >>f,"3\n%g %g %g %g %g %g %g %g %g %g %g" % \
-	      (xhi,yhi,zlo,thick,xhi,yhi,zhi,thick,red,green,blue)
-    
+              (xhi,ylo,zhi,thick,xhi,yhi,zhi,thick,red,green,blue)
+
+  print >>f,"3\n%g %g %g %g %g %g %g %g %g %g %g" % \
+              (xlo,ylo,zlo,thick,xlo,ylo,zhi,thick,red,green,blue)
+  print >>f,"3\n%g %g %g %g %g %g %g %g %g %g %g" % \
+              (xhi,ylo,zlo,thick,xhi,ylo,zhi,thick,red,green,blue)
+  print >>f,"3\n%g %g %g %g %g %g %g %g %g %g %g" % \
+              (xlo,yhi,zlo,thick,xlo,yhi,zhi,thick,red,green,blue)
+  print >>f,"3\n%g %g %g %g %g %g %g %g %g %g %g" % \
+              (xhi,yhi,zlo,thick,xhi,yhi,zhi,thick,red,green,blue)
+
 # --------------------------------------------------------------------
 # compute 3x3 rotation matrix for viewing angle
 
@@ -599,9 +599,9 @@ def rotation_matrix(coord1,angle1,coord2,angle2):
     a33 = 1.0
     a12 = a22 = c1
     a12 = s1; a21 = -s1
-  
+
   # 2nd rotation matrix
-  
+
   b11 = b12 = b13 = b21 = b22 = b23 = b31 = b32 = b33 = 0.0
   if coord2 == 'x':
     b11 = 1.0
@@ -615,26 +615,26 @@ def rotation_matrix(coord1,angle1,coord2,angle2):
     b33 = 1.0
     b11 = b22 = c2
     b12 = s2; b21 = -s2
-  
+
   # full matrix c = b*a
-  
+
   c11 = b11*a11 + b12*a21 + b13*a31
   c12 = b11*a12 + b12*a22 + b13*a32
   c13 = b11*a13 + b12*a23 + b13*a33
-  
+
   c21 = b21*a11 + b22*a21 + b23*a31
   c22 = b21*a12 + b22*a22 + b23*a32
   c23 = b21*a13 + b22*a23 + b23*a33
-  
+
   c31 = b31*a11 + b32*a21 + b33*a31
   c32 = b31*a12 + b32*a22 + b33*a32
   c33 = b31*a13 + b32*a23 + b33*a33
-  
+
   # form rotation matrix
   # each line padded with 0.0 for 4x4 raster3d matrix
 
   matrix = "%g %g %g 0.0\n%g %g %g 0.0\n%g %g %g 0.0" % \
-  	   (c11,c12,c13,c21,c22,c23,c31,c32,c33)
+           (c11,c12,c13,c21,c22,c23,c31,c32,c33)
   return matrix
 
 # --------------------------------------------------------------------
@@ -653,7 +653,7 @@ F         no, shadowed rods look funny
 0.25      specular reflection component
 %g        eye position
 1 1 1     main light source postion
-%s	  
+%s
 %g %g %g %g
 3         mixed object types
 *

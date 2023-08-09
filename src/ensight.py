@@ -3,7 +3,7 @@
 #
 # Copyright (2005) Sandia Corporation.  Under the terms of Contract
 # DE-AC04-94AL85000 with Sandia Corporation, the U.S. Government retains
-# certain rights in this software.  This software is distributed under 
+# certain rights in this software.  This software is distributed under
 # the GNU General Public License.
 
 # ensight tool
@@ -11,7 +11,7 @@
 oneline = "Convert LAMMPS snapshots or meshes to Ensight format"
 
 docstr = """
-e = ensight(d)	     d = object with atoms or elements (dump,data,mdump)
+e = ensight(d)       d = object with atoms or elements (dump,data,mdump)
 e.change = 1         set to 1 if element nodal xyz change with time (def = 0)
 e.maxtype = 10       max particle type, set if query to data will be bad
 
@@ -74,12 +74,12 @@ class ensight:
       self.which = 1
     else:
       raise StandardError,"unrecognized object passed to ensight"
-    
+
   # --------------------------------------------------------------------
 
   def one(self,*args):
     if len(args) % 2 == 0: root = "tmp"
-    else: 
+    else:
       root = args[0]
       args = args[1:]
 
@@ -90,7 +90,7 @@ class ensight:
 
     if self.which == 0 and self.maxtype == 0:
       self.maxtype = self.data.maxtype()
-    
+
     # write Ensight *.case header file
 
     f = open("%s.case" % root,"w")
@@ -140,7 +140,7 @@ class ensight:
         else:
           self.variable_file_elements(vfiles[i],pairs[i][1],etype,values)
         print >>vfiles[i],"END TIME STEP"
-        
+
       print time,
       sys.stdout.flush()
       n += 1
@@ -156,7 +156,7 @@ class ensight:
 
   def increment(self,*args):
     if len(args) % 2 == 0: root = "tmp"
-    else: 
+    else:
       root = args[0]
       args = args[1:]
 
@@ -214,7 +214,7 @@ class ensight:
         else:
           self.variable_file_elements(vfiles[i],pairs[i][1],etype,values)
         print >>vfiles[i],"END TIME STEP"
-        
+
       print time,
       sys.stdout.flush()
       n += 1
@@ -236,7 +236,7 @@ class ensight:
 
   def many(self,*args):
     if len(args) % 2 == 0: root = "tmp"
-    else: 
+    else:
       root = args[0]
       args = args[1:]
 
@@ -268,20 +268,20 @@ class ensight:
       files = []
       if n < 10:
         file = root + "000" + str(n) + ".xyz"
-	for pair in pairs:
-	  files.append(root + "000" + str(n) + "." + pair[0])
+        for pair in pairs:
+          files.append(root + "000" + str(n) + "." + pair[0])
       elif n < 100:
         file = root + "00" + str(n) + ".xyz"
-	for pair in pairs:
-	  files.append(root + "00" + str(n) + "." + pair[0])
+        for pair in pairs:
+          files.append(root + "00" + str(n) + "." + pair[0])
       elif n < 1000:
         file = root + "0" + str(n) + ".xyz"
-	for pair in pairs:
-	  files.append(root + "0" + str(n) + "." + pair[0])
+        for pair in pairs:
+          files.append(root + "0" + str(n) + "." + pair[0])
       else:
         file = root + str(n) + ".xyz"
-	for pair in pairs:
-	  files.append(root + str(n) + "." + pair[0])
+        for pair in pairs:
+          files.append(root + str(n) + "." + pair[0])
 
       if self.which == 0:
         f = open(file,"w")
@@ -309,19 +309,19 @@ class ensight:
           self.variable_file_atoms(f,pairs[i][1],atoms,values)
         else:
           self.variable_file_elements(f,pairs[i][1],etype,values)
-	f.close()
+        f.close()
 
       print time,
       sys.stdout.flush()
       n += 1
-  
+
     print "\nwrote %s snapshots in Ensight format" % n
 
   # --------------------------------------------------------------------
 
   def single(self,time,*args):
     if len(args) % 2 == 0: root = "tmp"
-    else: 
+    else:
       root = args[0]
       args = args[1:]
 
@@ -343,7 +343,7 @@ class ensight:
 
     which = self.data.findtime(time)
     etype = 0
-    
+
     f = open(root + ".xyz","w")
     if self.which == 0:
       time,box,atoms,bonds,tris,lines = self.data.viz(which)
@@ -353,7 +353,7 @@ class ensight:
       self.coord_file_elements(f,box,nodes,elements)
       etype = len(elements[0])
     f.close()
-    
+
     for i in range(len(pairs)):
       values = self.data.vecs(time,pairs[i][0])
       f = open(root + "." + pairs[i][0],"w")
@@ -362,14 +362,14 @@ class ensight:
       else:
         self.variable_file_elements(f,pairs[i][1],etype,values)
       f.close()
-      
+
   # --------------------------------------------------------------------
   # write Ensight case file
 
   def case_file(self,f,root,pairs,multifile,nsnaps,times):
     print >>f,"# Ensight case file\n"
     print >>f,"FORMAT\ntype: ensight gold\n"
-    
+
     if self.which == 0:
       if multifile:
 #        print >>f,"GEOMETRY\nmodel: %s****.xyz change_coords_only\n" % root
@@ -411,7 +411,7 @@ class ensight:
       if i % 10 == 9: print >>f
     print >>f
     print >>f
-    
+
     if not multifile:
       print >>f,"FILE"
       print >>f,"file set: 1"

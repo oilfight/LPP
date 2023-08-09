@@ -3,7 +3,7 @@
 #
 # Copyright (2005) Sandia Corporation.  Under the terms of Contract
 # DE-AC04-94AL85000 with Sandia Corporation, the U.S. Government retains
-# certain rights in this software.  This software is distributed under 
+# certain rights in this software.  This software is distributed under
 # the GNU General Public License.
 
 # tdump tool
@@ -12,14 +12,14 @@ oneline = "Read dump files with triangle info"
 
 docstr = """
 t = tdump("dump.one")             read in one or more dump files
-t = tdump("dump.1 dump.2.gz")	  can be gzipped
-t = tdump("dump.*")		  wildcard expands to multiple files
-t = tdump("dump.*",0)		  two args = store filenames, but don't read
+t = tdump("dump.1 dump.2.gz")     can be gzipped
+t = tdump("dump.*")               wildcard expands to multiple files
+t = tdump("dump.*",0)             two args = store filenames, but don't read
 
   incomplete and duplicate snapshots are deleted
   no column name assignment is performed
 
-time = t.next()             	  read next snapshot from dump files
+time = t.next()                   read next snapshot from dump files
 
   used with 2-argument constructor to allow reading snapshots one-at-a-time
   snapshot will be skipped only if another snapshot has same time stamp
@@ -43,7 +43,7 @@ time,box,atoms,bonds,tris,lines = t.viz(index)   return list of viz objects
       id,type are from associated atom
     lines = NULL
 
-t.owrap(...)		          wrap tris to same image as their atoms
+t.owrap(...)                      wrap tris to same image as their atoms
 
   owrap() is called by dump tool's owrap()
   useful for wrapping all molecule's atoms/tris the same so it is contiguous
@@ -101,7 +101,7 @@ class tdump:
     for word in words: self.flist += glob.glob(word)
     if len(self.flist) == 0 and len(list) == 1:
       raise StandardError,"no ldump file specified"
-    
+
     if len(list) == 1:
       self.increment = 0
       self.read_all()
@@ -156,15 +156,15 @@ class tdump:
       snap = self.read_snapshot(f)
       if not snap:
         self.nextfile += 1
-	if self.nextfile == len(self.flist): return -1
+        if self.nextfile == len(self.flist): return -1
         f.close()
-	self.eof = 0
-	continue
+        self.eof = 0
+        continue
       self.eof = f.tell()
       f.close()
       try:
         self.findtime(snap.time)
-	continue
+        continue
       except: break
 
     self.snaps.append(snap)
@@ -176,7 +176,7 @@ class tdump:
   # --------------------------------------------------------------------
   # read a single snapshot from file f
   # return snapshot or 0 if failed
-  
+
   def read_snapshot(self,f):
     try:
       snap = Snap()
@@ -217,7 +217,7 @@ class tdump:
 
   # --------------------------------------------------------------------
   # map atom column names
-  
+
   def map(self,*pairs):
     if len(pairs) % 2 != 0:
       raise StandardError, "tdump map() requires pairs of mappings"
@@ -248,7 +248,7 @@ class tdump:
       return 0
 
   # --------------------------------------------------------------------
-    
+
   def findtime(self,n):
     for i in xrange(self.nsnaps):
       if self.snaps[i].time == n: return i
@@ -264,7 +264,7 @@ class tdump:
         del self.snaps[i]
       else:
         i += 1
-  
+
   # --------------------------------------------------------------------
   # return list of lines to viz for snapshot isnap
   # if called with flag, then index is timestep, so convert to snapshot index
@@ -295,9 +295,9 @@ class tdump:
     corner3y = self.names["corner3y"]
     corner3z = self.names["corner3z"]
 
-    # create line list from id,type,corner1x,...corner3z
-    # don't add line if all 4 values are 0 since not a line
-    
+    # create tris list from id,type,corner1x,...corner3z
+    # don't add tri if all 4 values are 0 since not a line
+
     tris = []
     for i in xrange(snap.natoms):
       atom = snap.atoms[i]
@@ -334,7 +334,7 @@ class tdump:
     # idump = index of my line I in dump's atoms
     # jdump = atom J in dump's atoms that atom I was owrapped on
     # delx,dely = offset applied to atom I and thus to line I
-    
+
     for i in xrange(snap.natoms):
       tag = atoms[i][id]
       idump = idsdump[tag]
@@ -366,20 +366,20 @@ def normal(x,y,z):
   v1[0] = y[0] - x[0]
   v1[1] = y[1] - x[1]
   v1[2] = y[2] - x[2]
-  
+
   v2 = 3*[0]
   v2[0] = z[0] - y[0]
   v2[1] = z[1] - y[1]
   v2[2] = z[2] - y[2]
-      
+
   n = 3*[0]
   n[0] = v1[1]*v2[2] - v1[2]*v2[1]
   n[1] = v1[2]*v2[0] - v1[0]*v2[2]
   n[2] = v1[0]*v2[1] - v1[1]*v2[0]
-  
+
   length = sqrt(n[0]*n[0] + n[1]*n[1] + n[2]*n[2])
   n[0] /= length
   n[1] /= length
   n[2] /= length
-  
+
   return n

@@ -1,4 +1,4 @@
-#!/usr/bin/python 
+#!/usr/bin/python
 
 # Script:    density2d.py
 # Purpose:   binned atom density by atom type
@@ -65,12 +65,12 @@ while 1:
         ntypes = int(ntypes)
         bin = np.zeros(shape=(nbins,nbins,ntypes))
         first = 0
-        
+
     box = (d.snaps[-1].xlo,d.snaps[-1].ylo,d.snaps[-1].zlo,
                  d.snaps[-1].xhi,d.snaps[-1].yhi,d.snaps[-1].zhi)
-    vol = (box[3] - box[0]) * (box[4] - box[1]) * (box[5] - box[2]) 
+    vol = (box[3] - box[0]) * (box[4] - box[1]) * (box[5] - box[2])
 
-    if direction == "z": 
+    if direction == "z":
         type,x,y,z = d.vecs(time,"type","x","y","z")
         bidirect = 'x/y'
         dx = box[3] - box[0]
@@ -90,7 +90,7 @@ while 1:
         y0 = box[2] + float(dy)/float(nbins)/2.0
         zmax = min(zmax,box[4])
         zmin = max(zmin,box[1])
-    elif direction == "x": 
+    elif direction == "x":
         type,x,y,z = d.vecs(time,"type","y","z","x")
         bidirect = 'y/z'
         dx = box[4] - box[1]
@@ -105,7 +105,7 @@ while 1:
     type = map(int,type)
     natoms = len(type)
     for i in xrange(natoms): type[i] -= 1
-    
+
     for i in xrange(natoms):
         ibin = int(nbins*x[i])
         jbin = int(nbins*y[i])
@@ -119,10 +119,10 @@ while 1:
     nsnaps += 1
     print time,
 
-print 
+print
 print "Printing %s-mapped density distribution for %s-slice [%.2f,%.2f] in mol/L to %s" %(bidirect, direction, zmin, zmax, outfile)
 conversion = 1660.53873  # convert from atoms/Angs^3 to mol/L
-        
+
 fp = open(outfile,"w")
 # '''Uncomment for column headers. Commented for consistency with density.py'''
 # print >>fp, " %8s  %8s " %('ra', 'rb'),
@@ -134,5 +134,5 @@ for i in xrange(nbins):
         print >>fp, " %8.3f  %8.3f " %(float(i)/float(nbins)*float(dx)+float(x0), float(j)/float(nbins)*float(dy)+float(y0)),
         for k in xrange(ntypes):
             print >>fp, " %8.3f " % (conversion*bin[j][i][k]/nsnaps),
-        print >>fp 
+        print >>fp
 fp.close()

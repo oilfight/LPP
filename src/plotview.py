@@ -3,7 +3,7 @@
 #
 # Copyright (2005) Sandia Corporation.  Under the terms of Contract
 # DE-AC04-94AL85000 with Sandia Corporation, the U.S. Government retains
-# certain rights in this software.  This software is distributed under 
+# certain rights in this software.  This software is distributed under
 # the GNU General Public License.
 
 # plotview tool
@@ -62,27 +62,27 @@ class plotview:
     self.plot = plot
 
     # create GUI
-    
+
     from __main__ import tkroot
     root = Toplevel(tkroot)
     root.title('Pizza.py plotview tool')
-    
+
     self.frame1 = Frame(root)
     self.frame2 = Frame(root)
     self.frame3 = Frame(root)
-    
+
     Button(self.frame1,text="Print As:",command=self.save).pack(side=TOP)
     self.entry = Entry(self.frame1,width=16)
     self.entry.insert(0,"tmp")
     self.entry.pack(side=TOP)
-    
+
     Label(self.frame2,text="Select").pack(side=LEFT)
     Label(self.frame2,text = "Display").pack(side=RIGHT)
 
     self.nplots = source.nvec
     self.names = source.names
     self.x = self.names[0]
-    
+
     self.radiovar = IntVar()
     self.checkbuttons = []
     self.checkvars = []
@@ -91,18 +91,18 @@ class plotview:
     # for each vector (not including 1st)
     # create a plot and title it
     # create a line in GUI with selection and check button
-    
+
     for i in range(self.nplots):
       self.plot.select(i+1)
       self.plot.xtitle(self.x)
       self.plot.ytitle(self.names[i])
       self.plot.title(self.names[i])
-      
+
       b = BooleanVar()
       b.set(0)
       self.checkvars.append(b)
       self.checkold.append(0)
-      
+
       line = Frame(self.frame3)
       rtitle = "%d %s" % (i+1,self.names[i])
       Radiobutton(line, text=rtitle, value=i+1, variable=self.radiovar,
@@ -119,7 +119,7 @@ class plotview:
 
   # --------------------------------------------------------------------
   # set radio button and checkbox
-  
+
   def select(self,n):
     self.plot.select(n)
     self.radiovar.set(n)
@@ -130,7 +130,7 @@ class plotview:
 
   def yes(self,n):
     if not self.checkvars[n-1].get(): self.checkbuttons[n-1].invoke()
-  
+
   # --------------------------------------------------------------------
   # only invoke if currently set
 
@@ -143,7 +143,7 @@ class plotview:
     oldtext = self.entry.get()
     self.entry.delete(0,len(oldtext))
     self.entry.insert(0,newtext)
-  
+
   # --------------------------------------------------------------------
 
   def save(self):
@@ -154,7 +154,7 @@ class plotview:
 
   # --------------------------------------------------------------------
   # called when any radio selection button is clicked
-  
+
   def radioselect(self):
     self.select(self.radiovar.get())
 
@@ -163,7 +163,7 @@ class plotview:
   # draws or hides plot
   # loop is to find which checkbox changed status
   # grab x,y data to plot out of source object
-  
+
   def check(self):
     for i in range(self.nplots):
       if int(self.checkvars[i].get()) != self.checkold[i]:

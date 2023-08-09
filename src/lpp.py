@@ -18,7 +18,7 @@ import exceptions
 import getopt
 
 class lpp:
-  
+
   #=============================================================================
   # creates a filelist, seperates it to sublists
   # creates multiple processes
@@ -27,7 +27,7 @@ class lpp:
   #   calls dump, vtk and manyGran for the given list of files
   #   returns 0
   #=============================================================================
-  
+
   def __init__(self, *list, **kwargs):
     # do argument parsing, raise errors if non-integers were given
     # this can be changed if one wants less overhead but use more memory:
@@ -36,7 +36,7 @@ class lpp:
     self.chunksize   = 8
     self.overwrite   = True
 
-    if "--chunksize" in kwargs: 
+    if "--chunksize" in kwargs:
       try:
         if int(kwargs["--chunksize"]) > 0:
           self.chunksize = int(kwargs["--chunksize"])
@@ -44,7 +44,7 @@ class lpp:
       except ValueError:
         raise ValueError, "Invalid or no argument given for chunksize"
 
-    if "--cpunum" in kwargs: 
+    if "--cpunum" in kwargs:
       try:
         if int(kwargs["--cpunum"]) > 0 and int(kwargs["--cpunum"]) <= self.cpunum:
           self.cpunum = int(kwargs["--cpunum"])
@@ -55,11 +55,11 @@ class lpp:
     # do not overwrite existing files
     if "--no-overwrite" in kwargs:
       self.overwrite = False
-    
+
     # suppress output with 'False'
     if "--debug" in kwargs: self.debugMode = True
     else: self.debugMode = False
-    
+
     if "--quiet" in kwargs:
       self.output = False
       self.debugMode = False
@@ -72,7 +72,7 @@ class lpp:
     starttime = time.time()    
 
     if self.debugMode: print "number of process:", os.getpid()
-    
+
     # check whether file-list is nonempty
     self.flist = []
     # get file list for windows
@@ -89,15 +89,15 @@ class lpp:
       raise StandardError, "no dump file specified"
     if listlen == 1 and self.overwrite == False:
       raise StandardError, "Cannot process single dump files with --no-overwrite."
-    
+
     if self.output:
       print "Working with", self.cpunum, "processes..."
-    
+
     # seperate list in pieces+rest
     self.slices = []
-    
+
     residualPresent = int(bool(listlen-floor(listlen/self.chunksize)*self.chunksize))
-    
+
     for i in xrange(int(floor(listlen/self.chunksize))+residualPresent):
       slice = self.flist[i*self.chunksize:(i+1)*self.chunksize]
       self.slices.append(slice)
@@ -111,31 +111,31 @@ class lpp:
       "output":output,\
       "overwrite":self.overwrite} \
       for i in xrange(len(self.slices))]
-    
+
     if self.debugMode: print "dumpInput:",dumpInput
-    
+
     numberOfRuns = len(dumpInput)
     i = 0
     while i < len(dumpInput):
 
-      if self.output:    
+      if self.output:
         print "calculating chunks",i+1,"-",min(i+self.cpunum,numberOfRuns),"of",numberOfRuns
-      
+
       if self.debugMode: print "input of this \"map\": ",dumpInput[i:i+self.cpunum]
-      
+
       # create job_server
       job_server = multiprocessing.Pool(processes = self.cpunum)
-      
+
       # map lppWorker on all inputs via job_server (parallelly)
       job_server.map_async(lppWorker,dumpInput[i:i+self.cpunum]).get(9999999)
-      
+
       # close jobserver
       job_server.close()
       job_server.join()
       i += self.cpunum
-    
+
     endtime = time.time()
-    if self.output:    
+    if self.output:
       print "wrote", listlen,"granular snapshots in VTK format"
       print "time needed:",endtime-starttime,"sec"
 
@@ -144,7 +144,7 @@ def lppWorker(input):
   debugMode = input["debugMode"]
   outfileName = input["output"]
   overwrite = input["overwrite"]
-  
+
   flistlen = len(flist)
   # generate name of manyGran
   splitfname = flist[0].rsplit(".")
@@ -154,7 +154,7 @@ def lppWorker(input):
     granName = outfileName + splitfname[len(splitfname)-1]
   else:
     granName = outfileName
-  
+
   # if no-overwrite: read timestamp in first line of file
   # if corresponding dump-file does not already exists: add it to 'shortFlist'
   # shortFlist ... list of files to finally be processed by dump, and vtk.
@@ -174,13 +174,13 @@ def lppWorker(input):
         ff.close()
       except:
         continue
-      
+
       # generate filename from time like in vtk,
       # check if file exists; if yes: do not add to list
       filename,file_bb,file_walls = vtk.generateFilename(granName,[time],0)
       if not os.path.isfile(filename):
         shortFlist.append(f)
-  
+
   # call dump, vtk, manyGran on shortFlist
   try:
     d = dump({"filelist":shortFlist, "debugMode":debugMode})
@@ -189,7 +189,7 @@ def lppWorker(input):
     v.manyGran(granName,fileNos=d.fileNums,output=debugMode)
   except KeyboardInterrupt:
     raise
-  
+
   return 0
 
 def printHelp():
@@ -223,10 +223,10 @@ if __name__ == "__main__":
     # except:
     #  if sys.exc_type == exceptions.SystemExit:
     #    pass
-    #  else: 
+    #  else:
     #    print sys.exc_info()
     #===========================================================================
   else:
     printHelp()
 
-  
+

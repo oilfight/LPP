@@ -3,7 +3,7 @@
 #
 # Copyright (2005) Sandia Corporation.  Under the terms of Contract
 # DE-AC04-94AL85000 with Sandia Corporation, the U.S. Government retains
-# certain rights in this software.  This software is distributed under 
+# certain rights in this software.  This software is distributed under
 # the GNU General Public License.
 
 # mdump tool
@@ -12,13 +12,13 @@ oneline = "Read, write, manipulate mesh dump files"
 
 docstr = """
 m = mdump("mesh.one")             read in one or more mesh dump files
-m = mdump("mesh.1 mesh.2.gz")	  can be gzipped
-m = mdump("mesh.*")		  wildcard expands to multiple files
-m = mdump("mesh.*",0)		  two args = store filenames, but don't read
+m = mdump("mesh.1 mesh.2.gz")     can be gzipped
+m = mdump("mesh.*")               wildcard expands to multiple files
+m = mdump("mesh.*",0)             two args = store filenames, but don't read
 
   incomplete and duplicate snapshots are deleted
 
-time = m.next()             	  read next snapshot from dump files
+time = m.next()                   read next snapshot from dump files
 
   used with 2-argument constructor to allow reading snapshots one-at-a-time
   snapshot will be skipped only if another snapshot has same time stamp
@@ -28,20 +28,20 @@ time = m.next()             	  read next snapshot from dump files
 
 m.map(2,"temperature")            assign names to element value columns (1-N)
 
-m.tselect.all()			  select all timesteps
-m.tselect.one(N)		  select only timestep N
-m.tselect.none()		  deselect all timesteps
-m.tselect.skip(M)		  select every Mth step
+m.tselect.all()                   select all timesteps
+m.tselect.one(N)                  select only timestep N
+m.tselect.none()                  deselect all timesteps
+m.tselect.skip(M)                 select every Mth step
 m.tselect.test("$t >= 100 and $t < 10000")      select matching timesteps
-m.delete()	      	      	  delete non-selected timesteps
+m.delete()                        delete non-selected timesteps
 
   selecting a timestep also selects all elements in the timestep
   skip() and test() only select from currently selected timesteps
   test() uses a Python Boolean expression with $t for timestep value
     Python comparison syntax: == != < > <= >= and or
 
-m.eselect.all()	      	                      select all elems in all steps
-m.eselect.all(N)      	                      select all elems in one step
+m.eselect.all()                               select all elems in all steps
+m.eselect.all(N)                              select all elems in one step
 m.eselect.test("$id > 100 and $type == 2")    select match elems in all steps
 m.eselect.test("$id > 100 and $type == 2",N)  select matching elems in one step
 
@@ -52,7 +52,7 @@ m.eselect.test("$id > 100 and $type == 2",N)  select matching elems in one step
     Python comparison syntax: == != < > <= >= and or
     $name must end with a space
 
-t = m.time()  	     	       	   return vector of selected timestep values
+t = m.time()                        return vector of selected timestep values
 fx,fy,... = m.vecs(1000,"fx","fy",...)  return vector(s) for timestep N
 
   vecs() returns vectors with one value for each selected elem in the timestep
@@ -161,7 +161,7 @@ class mdump:
     for word in words: self.flist += glob.glob(word)
     if len(self.flist) == 0 and len(list) == 1:
       raise StandardError,"no dump file specified"
-    
+
     if len(list) == 1:
       self.increment = 0
       self.read_all()
@@ -228,7 +228,7 @@ class mdump:
     # reference definitions of nodes and elements in previous timesteps
 
     self.reference()
-    
+
     self.nsnaps = len(self.snaps)
     print "read %d snapshots" % self.nsnaps
 
@@ -253,15 +253,15 @@ class mdump:
       snap = self.read_snapshot(f)
       if not snap:
         self.nextfile += 1
-	if self.nextfile == len(self.flist): return -1
+        if self.nextfile == len(self.flist): return -1
         f.close()
-	self.eof = 0
-	continue
+        self.eof = 0
+        continue
       self.eof = f.tell()
       f.close()
       try:
         self.findtime(snap.time)
-	continue
+        continue
       except: break
 
     # select the new snapshot with all its elements
@@ -308,7 +308,7 @@ class mdump:
         snap.ylo,snap.yhi = float(words[0]),float(words[1])
         words = f.readline().split()
         snap.zlo,snap.zhi = float(words[0]),float(words[1])
-        
+
       item = f.readline()
       if n:
         words = f.readline().split()
@@ -340,7 +340,7 @@ class mdump:
 
   # --------------------------------------------------------------------
   # map atom column names
-  
+
   def map(self,*pairs):
     if len(pairs) % 2 != 0:
       raise StandardError, "mdump map() requires pairs of mappings"
@@ -407,7 +407,7 @@ class mdump:
     snap = self.snaps[self.findtime(n)]
     if not snap.evalues:
       raise StandardError, "snapshot has no element values"
-      
+
     if len(list) == 0:
       raise StandardError, "no columns specified"
     columns = []
@@ -441,7 +441,7 @@ class mdump:
   # --------------------------------------------------------------------
   # delete successive snapshots with duplicate time stamp
   # if have same timestamp, combine them if internal flags are different
-  
+
   def cull(self):
     i = 1
     while i < len(self.snaps):
@@ -480,7 +480,7 @@ class mdump:
   # --------------------------------------------------------------------
   # insure every snapshot has node and element connectivity info
   # if not, point it at most recent shapshot that does
-  
+
   def reference(self):
     for i in xrange(len(self.snaps)):
       if not self.snaps[i].nflag:
@@ -520,11 +520,11 @@ class mdump:
         self.iterate = i
         return i,self.snaps[i].time,1
     return 0,0,-1
-  
+
   # --------------------------------------------------------------------
   # return list of triangles to viz for snapshot isnap
   # if called with flag, then index is timestep, so convert to snapshot index
-  
+
   def viz(self,index,flag=0):
     if not flag: isnap = index
     else:
@@ -536,7 +536,7 @@ class mdump:
         i += 1
       isnap = i - 1
     snap = self.snaps[isnap]
-    
+
     time = snap.time
     box = [snap.xlo,snap.ylo,snap.zlo,snap.xhi,snap.yhi,snap.zhi]
     if self.etype == "": type = -1
@@ -547,7 +547,7 @@ class mdump:
 
     # create triangle list from all elements
     # for type, either use element type (-1) or user-defined column in evalues
-    
+
     tris = []
     nodes = snap.nodes
     for i in xrange(snap.nelements):
@@ -557,7 +557,7 @@ class mdump:
       else: evalues = []
 
       # single tri, normal = up
-      
+
       if snap.eflag == 1:
         v1 = nodes[int(element[2])-1][2:5].tolist()
         v2 = nodes[int(element[3])-1][2:5].tolist()
@@ -568,7 +568,7 @@ class mdump:
         else: tris.append([element[0],evalue[type]] + list + n)
 
       # single tet, convert to 4 tris, normals = out
-      
+
       elif snap.eflag == 2:
         v1 = nodes[int(element[2])-1][2:5].tolist()
         v2 = nodes[int(element[3])-1][2:5].tolist()
@@ -592,7 +592,7 @@ class mdump:
         else: tris.append([element[0],evalue[type]] + list + n)
 
       # single square, convert to 2 tris, normals = up
-      
+
       elif snap.eflag == 3:
         v1 = nodes[int(element[2])-1][2:5].tolist()
         v2 = nodes[int(element[3])-1][2:5].tolist()
@@ -608,7 +608,7 @@ class mdump:
         else: tris.append([element[0],evalue[type]] + list + n)
 
       # single cube, convert to 12 tris, normals = out
-        
+
       elif snap.eflag == 4:
         v1 = nodes[int(element[2])-1][2:5].tolist()
         v2 = nodes[int(element[3])-1][2:5].tolist()
@@ -666,7 +666,7 @@ class mdump:
         n = normal(list[0:3],list[3:6],list[6:9])
         if type == -1: tris.append([element[0],element[1]] + list + n)
         else: tris.append([element[0],evalue[type]] + list + n)
-      
+
     lines = []
 
     return time,box,atoms,bonds,tris,lines
@@ -674,7 +674,7 @@ class mdump:
   # --------------------------------------------------------------------
   # return lists of node/element info for snapshot isnap
   # if called with flag, then index is timestep, so convert to snapshot index
-  
+
   def mviz(self,index,flag=0):
     if not flag: isnap = index
     else:
@@ -686,14 +686,14 @@ class mdump:
         i += 1
       isnap = i - 1
     snap = self.snaps[isnap]
-    
+
     time = snap.time
     box = [snap.xlo,snap.ylo,snap.zlo,snap.xhi,snap.yhi,snap.zhi]
     nvalues = []
     if snap.nvalueflag: nvalues = snap.nvalues
     evalues = []
     if snap.nvalueflag: evalues = snap.evalues
-    
+
     return time,box,snap.nodes,snap.elements,nvalues,evalues
 
   # --------------------------------------------------------------------
@@ -718,7 +718,7 @@ class mdump:
       if zlo == None or snap.zlo < zlo: zlo = snap.zlo
       if zhi == None or snap.zhi > zhi: zhi = snap.zhi
     return [xlo,ylo,zlo,xhi,yhi,zhi]
-    
+
   # --------------------------------------------------------------------
 
   def compare_atom(self,a,b):
@@ -727,7 +727,7 @@ class mdump:
     elif a[0] > b[0]:
       return 1
     else:
-      return 0  
+      return 0
 
 # --------------------------------------------------------------------
 # one snapshot
@@ -742,7 +742,7 @@ class tselect:
 
   def __init__(self,data):
     self.data = data
-    
+
   # --------------------------------------------------------------------
 
   def all(self):
@@ -789,7 +789,7 @@ class tselect:
       data.nselect -= 1
     data.eselect.all()
     print "%d snapshots selected out of %d" % (data.nselect,data.nsnaps)
-  
+
   # --------------------------------------------------------------------
 
   def test(self,teststr):
@@ -835,7 +835,7 @@ class eselect:
     data = self.data
 
     # replace all $var with snap.atoms references and compile test string
-    
+
     pattern = "\$\w*"
     list = re.findall(pattern,teststr)
     for item in list:

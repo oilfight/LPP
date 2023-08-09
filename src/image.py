@@ -3,7 +3,7 @@
 #
 # Copyright (2005) Sandia Corporation.  Under the terms of Contract
 # DE-AC04-94AL85000 with Sandia Corporation, the U.S. Government retains
-# certain rights in this software.  This software is distributed under 
+# certain rights in this software.  This software is distributed under
 # the GNU General Public License.
 
 # image tool
@@ -13,14 +13,14 @@ oneline = "View and manipulate images"
 docstr = """
 i = image("my1.gif my2.gif")    display thumbnails of matching images
 i = image("*.png *.gif")        wildcards allowed
-i = image("")	   		blank string matches all image suffixes
-i = image()			no display window opened if no arg
+i = image("")                   blank string matches all image suffixes
+i = image()                     no display window opened if no arg
 
   image suffixes for blank string = *.png, *.bmp, *.gif, *.tiff, *.tif
   click on a thumbnail to view it full-size
   click on thumbnail again to remove full-sized version
 
-i.view("*.png *.gif")	        display thumbnails of matching images
+i.view("*.png *.gif")           display thumbnails of matching images
 
   view arg is same as constructor arg
 
@@ -62,7 +62,7 @@ except: PIZZA_MONTAGE = "montage"
 # Class definition
 
 class image:
-  
+
   # --------------------------------------------------------------------
 
   def __init__(self,filestr=None):
@@ -84,24 +84,24 @@ class image:
     from __main__ import tkroot
 
     # GUI control window
-    
+
     gui = Toplevel(tkroot)
     gui.title('Pizza.py image tool')
-    
+
     scroll = \
       Pmw.ScrolledFrame(gui,usehullsize=1,hull_width=420,hull_height=500)
     pane = scroll.interior()
-    
+
     ncolumns = 4
     for i in xrange(len(files)):
-      
+
       # create new row frame if 1st in column
-      
+
       if i % ncolumns == 0: rowframe = Frame(pane)
       oneframe = Frame(rowframe)
-      
+
       # create a thumbnail of image
-      
+
       im = Image.open(files[i])
       imt = im.copy()
       imt.thumbnail((60,60),Image.ANTIALIAS)
@@ -109,7 +109,7 @@ class image:
       imt.save("tmp." + basename)
       thumbnail = ImageTk.PhotoImage(file = "tmp." + basename)
       os.remove("tmp." + basename)
-      
+
       # read in full size image
       # create a thumbnail object that links to it
       # create button that calls the thumbnail, label with filename
@@ -119,18 +119,18 @@ class image:
       obj = thumbnails(gui,files[i],big,thumbnail)
       Button(oneframe,image=thumbnail,command=obj.display).pack(side=TOP)
       Label(oneframe,text=basename).pack(side=BOTTOM)
-      
+
       # pack into row frame
-      
+
       oneframe.pack(side=LEFT)
       if (i+1) % ncolumns == 0: rowframe.pack(side=TOP)
-      
+
     if len(files) % ncolumns != 0: rowframe.pack(side=TOP)
-    scroll.pack(side=LEFT)     
+    scroll.pack(side=LEFT)
 
   # --------------------------------------------------------------------
   # wrapper on ImageMagick convert command
-  
+
   def convert(self,file1,file2,switch=""):
     if file1.find('*') < 0 or file2.find('*') < 0:
       cmd = "%s %s %s %s" % (PIZZA_CONVERT,switch,file1,file2)
@@ -168,7 +168,7 @@ class image:
         for j in range(nsets): cmd += " %s" % fileargs[j]
         commands.getoutput(cmd)
         return
-    
+
     nfiles = len(glob.glob(fileargs[0]))
     filesets = []
     for i in range(nsets-1):
@@ -197,7 +197,7 @@ class image:
 
 # --------------------------------------------------------------------
 # thumbnail class
-     
+
 class thumbnails:
 
   def __init__(self,root,name,bigimage,thumbimage):
@@ -207,19 +207,19 @@ class thumbnails:
     self.name = name
     self.bigexist = 0
     self.window = None
-    
+
   def display(self):
 
     # destroy the big image window
-    
+
     if self.bigexist:
       self.bigexist = 0
       if self.window:
         self.window.destroy()
-	self.window = None
-    
+        self.window = None
+
     # create a new window with the big image
-    
+
     else:
       self.bigexist = 1
       self.window = Toplevel(self.root)
@@ -230,4 +230,4 @@ class thumbnails:
 # list of file extensions to test for
 # could add any extensions that PIL recognizes
 
-extensions = ["*.png", "*.bmp", "*.gif", "*.tiff", "*.tif"] 	
+extensions = ["*.png", "*.bmp", "*.gif", "*.tiff", "*.tif"]

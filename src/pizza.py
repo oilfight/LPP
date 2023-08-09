@@ -5,7 +5,7 @@
 #
 # Copyright (2005) Sandia Corporation.  Under the terms of Contract
 # DE-AC04-94AL85000 with Sandia Corporation, the U.S. Government retains
-# certain rights in this software.  This software is distributed under 
+# certain rights in this software.  This software is distributed under
 # the GNU General Public License.
 
 # Change log:
@@ -26,12 +26,12 @@ type ? for help, CTRL-D to quit
 
 help = """
 pizza.py switch arg(s) switch arg(s) ...
-  -s	 	              silent (else print start-up help)
-  -t log dump raster	      load only these tools
-  -x raster rasmol	      load all tools except these
+  -s                          silent (else print start-up help)
+  -t log dump raster          load only these tools
+  -x raster rasmol            load all tools except these
   -f mine.py arg1 arg2        run script file with args
-  -c "vec = range(100)"	      run Python command
-  -q 	   		      quit (else interactive)
+  -c "vec = range(100)"       run Python command
+  -q                          quit (else interactive)
 
 Everything typed at the ">" prompt is a Python command
 
@@ -39,13 +39,13 @@ Additional commands available at ">" prompt:
   ?                           print help message
   ??                          one-line for each tool and script
   ? raster                    list tool commands or script syntax
-  ?? energy.py                full documentation of tool or script 
+  ?? energy.py                full documentation of tool or script
   !ls -l                      shell command
   @cd ..                      cd to a new directory
   @log tmp.log                log all commands typed so far to file
   @run block.py arg1 arg2     run script file with args
   @time d = dump("*.dump")    time a command
-  
+
 Tools:
 """
 
@@ -86,13 +86,13 @@ def trap(type,value,tback):
    global argv
 
    # only check SyntaxErrors
-   
+
    if not isinstance(value,exceptions.SyntaxError):
      sys.__excepthook__(type,value,tback)
      return
-        
+
    # special commands at top level only, not in indented text entry
-   
+
    if value.text[0].isspace():
      sys.__excepthook__(type,value,tback)
      return
@@ -105,19 +105,19 @@ def trap(type,value,tback):
 
    if value.text[0] == "?":
      words = value.text.split()
-     
+
      if len(words) == 1 and words[0] == "?":
        print intro[1:] % version
        print help[1:]," ",
        for tool in tools: print tool,
        print
-       
+
      elif len(words) == 1 and words[0] == "??":
        for tool in tools:
          exec "oneline = oneline_%s" % tool
          print "%-11s%s" % (tool,oneline)
        print
-       
+
        scripts = []
        for dir in PIZZA_SCRIPTS[1:]:
          list = glob.glob("%s/*.py" % dir)
@@ -134,7 +134,7 @@ def trap(type,value,tback):
          if flag: doc = line[line.find("Purpose:")+8:]
          else: doc = " not available\n"
          print "%-20s%s" % (filename,doc),
-           
+
      elif len(words) == 2 and words[0] == "?":
        if words[1][-3:] == ".py":
          fileflag = 0
@@ -154,7 +154,7 @@ def trap(type,value,tback):
              break
          if not fileflag:
            print "%s is not a recognized script" % words[1]
-           
+
        else:
          if words[1] in tools:
            exec "txt = docstr_%s" % words[1]
@@ -164,7 +164,7 @@ def trap(type,value,tback):
            print txt
          else:
            print "%s is not a recognized tool" % words[1]
-           
+
      elif len(words) == 2 and words[0] == "??":
        if words[1][-3:] == ".py":
          fileflag = 0
@@ -187,7 +187,7 @@ def trap(type,value,tback):
            exec "print docstr_%s" % words[1]
          else:
            print "%s is not a recognized class" % words[1]
-         
+
      return
 
    # shell command like !ls, !ls -l
@@ -200,7 +200,7 @@ def trap(type,value,tback):
    # for run and time, use namespace in execfile and exec commands
    #   else variables defined in script/command
    #   won't be set in top-level Pizza.py
-   
+
    if value.text[0] == "@":
      words = value.text.split()
      if words[0][1:] == "cd":
@@ -237,9 +237,9 @@ def trap(type,value,tback):
        t2 = clock()
        print "CPU time = ",t2-t1
        return
-     
+
    # unrecognized command, let system handle error
-   
+
    sys.__excepthook__(type,value,tback)
 
 # -------------------------------------------------------------------------
@@ -306,7 +306,7 @@ if not silent: print intro[1:] % version,
 if len(yes_tools) > 0 and len(no_tools) > 0:
   print "ERROR: cannot use -t and -x switches together"
   sys.exit()
-  
+
 # -------------------------------------------------------------------------
 # tools = list of tool names to import
 # if -t switch was used, tools = just those files
@@ -424,7 +424,7 @@ for task in tasks:
     cmd = ""
     for arg in argv: cmd += arg + " "
     exec cmd
-    
+
 # -------------------------------------------------------------------------
 # store global namespace
 # swap in a new exception handler

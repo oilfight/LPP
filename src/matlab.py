@@ -3,7 +3,7 @@
 #
 # Copyright (2005) Sandia Corporation.  Under the terms of Contract
 # DE-AC04-94AL85000 with Sandia Corporation, the U.S. Government retains
-# certain rights in this software.  This software is distributed under 
+# certain rights in this software.  This software is distributed under
 # the GNU General Public License.
 
 # matlab tool
@@ -11,12 +11,12 @@
 oneline = "Create plots via MatLab numerical analysis program"
 
 docstr = """
-m = matlab()		       start up MatLab
-m.stop()		       shut down MatLab process
-    
+m = matlab()                   start up MatLab
+m.stop()                       shut down MatLab process
+
 m.plot(a)                      plot vector A against linear index
-m.plot(a,b)	 	       plot B against A
-m.plot(a,b,c,d,...)	       plot B against A, D against C, etc
+m.plot(a,b)                    plot B against A
+m.plot(a,b,c,d,...)            plot B against A, D against C, etc
 m.mplot(M,N,S,"file",a,b,...)  multiple plots saved to file0000.eps, etc
 
   each plot argument can be a tuple, list, or Numeric/NumPy vector
@@ -29,10 +29,10 @@ m.mplot(M,N,S,"file",a,b,...)  multiple plots saved to file0000.eps, etc
 
 m("c = a + b")                 execute string in MatLab
 
-m.enter()	   	       enter MatLab shell
+m.enter()                      enter MatLab shell
 matlab> c = a + b              type commands directly to MatLab
-matlab> exit, quit	       exit MatLab shell
-    
+matlab> exit, quit             exit MatLab shell
+
 m.export("data",range(100),a,...)       create file with columns of numbers
 
   all vectors must be of equal length
@@ -40,12 +40,12 @@ m.export("data",range(100),a,...)       create file with columns of numbers
     cols = importdata('data')
     plot(cols(:,1),cols(:,2))
 
-m.select(N)  	               figure N becomes the current plot
-  
+m.select(N)                    figure N becomes the current plot
+
   subsequent commands apply to this plot
 
-m.hide(N)  	               delete window for figure N
-m.save("file")	               save current plot as file.eps
+m.hide(N)                      delete window for figure N
+m.save("file")                 save current plot as file.eps
 
 Set attributes for current plot:
 
@@ -101,7 +101,7 @@ except: PIZZA_MATLAB = "matlab -nosplash -nodesktop -nojvm"
 # Class definition
 
 class matlab:
-  
+
   # --------------------------------------------------------------------
 
   def __init__(self):
@@ -109,7 +109,7 @@ class matlab:
     self.file = "tmp.matlab"
     self.figures = []
     self.select(1)
-              
+
   # --------------------------------------------------------------------
 
   def stop(self):
@@ -121,7 +121,7 @@ class matlab:
   def __call__(self,command):
     self.MATLAB.write(command + '\n')
     self.MATLAB.flush()
-    
+
   # --------------------------------------------------------------------
 
   def enter(self):
@@ -146,11 +146,11 @@ class matlab:
         self.export(file,vectors[i],vectors[i+1])
       self.figures[self.current-1].ncurves = len(vectors)/2
     self.draw()
-    
+
   # --------------------------------------------------------------------
   # create multiple plots from growing vectors, save to numbered files
   # don't plot empty vector, create a [0] instead
-  
+
   def mplot(self,start,stop,skip,file,*vectors):
     n = 0
     for i in range(start,stop,skip):
@@ -212,7 +212,7 @@ class matlab:
     self.__call__(cmd)
     self.__call__("!touch tmp.done")
     while not os.path.exists("tmp.done"): continue
-  
+
   # --------------------------------------------------------------------
   # restore default attributes by creating a new fig object
 
@@ -221,7 +221,7 @@ class matlab:
     fig.ncurves = self.figures[self.current-1].ncurves
     self.figures[self.current-1] = fig
     self.draw()
-  
+
   # --------------------------------------------------------------------
 
   def aspect(self,value):
@@ -245,12 +245,12 @@ class matlab:
     else:
       self.figures[self.current-1].ylimit = (values[0],values[1])
     self.draw()
-    	    
+
   # --------------------------------------------------------------------
 
   def label(self,x,y,text):
     self.figures[self.current-1].labels.append((x,y,text))
-    self.figures[self.current-1].nlabels += 1  	    
+    self.figures[self.current-1].nlabels += 1
     self.draw()
 
   # --------------------------------------------------------------------
@@ -259,7 +259,7 @@ class matlab:
     self.figures[self.current-1].nlabel = 0
     self.figures[self.current-1].labels = []
     self.draw()
-      
+
   # --------------------------------------------------------------------
 
   def title(self,*strings):
@@ -276,13 +276,13 @@ class matlab:
   def xtitle(self,label):
     self.figures[self.current-1].xtitle = label
     self.draw()
-    
+
   # --------------------------------------------------------------------
 
   def ytitle(self,label):
     self.figures[self.current-1].ytitle = label
     self.draw()
-    
+
   # --------------------------------------------------------------------
 
   def xlog(self):
@@ -291,7 +291,7 @@ class matlab:
     else:
       self.figures[self.current-1].xlog = 1
     self.draw()
- 
+
   # --------------------------------------------------------------------
 
   def ylog(self):
@@ -300,7 +300,7 @@ class matlab:
     else:
       self.figures[self.current-1].ylog = 1
     self.draw()
-  
+
   # --------------------------------------------------------------------
 
   def curve(self,num,*settings):
@@ -348,16 +348,16 @@ class matlab:
     self.__call__("ylabel('%s','FontSize',16)" % fig.ytitle)
 
     if fig.xlimit == 0 or fig.ylimit == 0: self.__call__("axis auto")
-    if fig.xlimit: 
+    if fig.xlimit:
       self.__call__("xlim([%g,%g])" % (fig.xlimit[0],fig.xlimit[1]))
-    if fig.ylimit: 
+    if fig.ylimit:
       self.__call__("ylim([%g,%g])" % (fig.ylimit[0],fig.ylimit[1]))
 
     for i in range(fig.nlabels):
       x = fig.labels[i][0]
       y = fig.labels[i][1]
       text = fig.labels[i][2]           # kludge to set label font size
-      self.__call__("text(%g,%g,'%s','FontSize',16)" % (x,y,text))      
+      self.__call__("text(%g,%g,'%s','FontSize',16)" % (x,y,text))
 
 # --------------------------------------------------------------------
 # class to store settings for a single plot

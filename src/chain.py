@@ -3,7 +3,7 @@
 #
 # Copyright (2005) Sandia Corporation.  Under the terms of Contract
 # DE-AC04-94AL85000 with Sandia Corporation, the U.S. Government retains
-# certain rights in this software.  This software is distributed under 
+# certain rights in this software.  This software is distributed under
 # the GNU General Public License.
 
 # chain tool
@@ -12,11 +12,11 @@ oneline = "Create bead-spring chains for LAMMPS input"
 
 docstr = """
 c = chain(N,rho)            setup box with N monomers at reduced density rho
-c = chain(N,rho,1,1,2)	    x,y,z = aspect ratio of box (def = 1,1,1)
+c = chain(N,rho,1,1,2)      x,y,z = aspect ratio of box (def = 1,1,1)
 
 c.seed = 48379              set random # seed (def = 12345)
-c.mtype = 2    		    set type of monomers (def = 1)
-c.btype = 1           	    set type of bonds (def = 1)
+c.mtype = 2                 set type of monomers (def = 1)
+c.btype = 1                 set type of bonds (def = 1)
 c.blen = 0.97               set length of bonds (def = 0.97)
 c.dmin = 1.02               set min dist from i-1 to i+1 site (def = 1.02)
 
@@ -24,11 +24,11 @@ c.id = "chain"              set molecule ID to chain # (default)
 c.id = "end1"               set molecule ID to count from one end of chain
 c.id = "end2"               set molecule ID to count from either end of chain
 
-c.build(100,10)		    create 100 chains, each of length 10
+c.build(100,10)             create 100 chains, each of length 10
 
   can be invoked multiple times interleaved with different settings
   must fill box with total of N monomers
-  
+
 c.write("data.file")        write out all built chains to LAMMPS data file
 """
 
@@ -60,7 +60,7 @@ from data import data
 # Class definition
 
 class chain:
-  
+
   # --------------------------------------------------------------------
 
   def __init__(self,n,rhostar,*list):
@@ -112,7 +112,7 @@ class chain:
           x = self.xlo + self.random()*self.xprd
           y = self.ylo + self.random()*self.yprd
           z = self.zlo + self.random()*self.zprd
-	  ix = iy = iz = 0
+          ix = iy = iz = 0
         else:
           restriction = True
           while restriction:
@@ -134,7 +134,7 @@ class chain:
               dz = z - atoms[-2][5]
               if math.sqrt(dx*dx + dy*dy + dz*dz) <= self.dmin:
                 restriction = True
-              
+
         x,y,z,ix,iy,iz = self.pbc(x,y,z,ix,iy,iz)
         idatom = id_atom_prev + imonomer + 1
         if self.id == "chain":
@@ -147,12 +147,12 @@ class chain:
             idmol = nper - imonomer
         else:
           raise StandardError,"chain ID is not a valid value"
-	        
+
         atoms.append([idatom,idmol,self.mtype,x,y,z,ix,iy,iz])
         if imonomer:
-	  bondid = id_bond_prev + imonomer
+          bondid = id_bond_prev + imonomer
           bonds.append([bondid,self.btype,idatom-1,idatom])
-        
+
       self.atoms += atoms
       self.bonds += bonds
 
@@ -186,7 +186,7 @@ class chain:
     lines = []
     for i in range(atypes): lines.append("%d 1.0\n" % (i+1))
     d.sections["Masses"] = lines
-    
+
     lines = []
     for atom in self.atoms:
       line = "%d %d %d %g %g %g %d %d %d\n" % \
@@ -194,7 +194,7 @@ class chain:
               atom[6], atom[7], atom[8])
       lines.append(line)
     d.sections["Atoms"] = lines
-    
+
     lines = []
     for bond in self.bonds:
       line = "%d %d %d %d\n" % (bond[0], bond[1], bond[2], bond[3])

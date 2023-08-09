@@ -3,7 +3,7 @@
 #
 # Copyright (2005) Sandia Corporation.  Under the terms of Contract
 # DE-AC04-94AL85000 with Sandia Corporation, the U.S. Government retains
-# certain rights in this software.  This software is distributed under 
+# certain rights in this software.  This software is distributed under
 # the GNU General Public License.
 
 # ldump tool
@@ -12,14 +12,14 @@ oneline = "Read dump files with line segment info"
 
 docstr = """
 l = ldump("dump.one")             read in one or more dump files
-l = ldump("dump.1 dump.2.gz")	  can be gzipped
-l = ldump("dump.*")		  wildcard expands to multiple files
-l = ldump("dump.*",0)		  two args = store filenames, but don't read
+l = ldump("dump.1 dump.2.gz")     can be gzipped
+l = ldump("dump.*")               wildcard expands to multiple files
+l = ldump("dump.*",0)             two args = store filenames, but don't read
 
   incomplete and duplicate snapshots are deleted
   no column name assignment is performed
 
-time = l.next()             	  read next snapshot from dump files
+time = l.next()                   read next snapshot from dump files
 
   used with 2-argument constructor to allow reading snapshots one-at-a-time
   snapshot will be skipped only if another snapshot has same time stamp
@@ -43,7 +43,7 @@ time,box,atoms,bonds,tris,lines = l.viz(index)   return list of viz objects
     lines = id,type,x1,y1,z1,x2,y2,z2 for each line as 2d array
       id,type are from associated atom
 
-l.owrap(...)		          wrap lines to same image as their atoms
+l.owrap(...)                      wrap lines to same image as their atoms
 
   owrap() is called by dump tool's owrap()
   useful for wrapping all molecule's atoms/lines the same so it is contiguous
@@ -100,7 +100,7 @@ class ldump:
     for word in words: self.flist += glob.glob(word)
     if len(self.flist) == 0 and len(list) == 1:
       raise StandardError,"no ldump file specified"
-    
+
     if len(list) == 1:
       self.increment = 0
       self.read_all()
@@ -155,15 +155,15 @@ class ldump:
       snap = self.read_snapshot(f)
       if not snap:
         self.nextfile += 1
-	if self.nextfile == len(self.flist): return -1
+        if self.nextfile == len(self.flist): return -1
         f.close()
-	self.eof = 0
-	continue
+        self.eof = 0
+        continue
       self.eof = f.tell()
       f.close()
       try:
         self.findtime(snap.time)
-	continue
+        continue
       except: break
 
     self.snaps.append(snap)
@@ -175,7 +175,7 @@ class ldump:
   # --------------------------------------------------------------------
   # read a single snapshot from file f
   # return snapshot or 0 if failed
-  
+
   def read_snapshot(self,f):
     try:
       snap = Snap()
@@ -216,7 +216,7 @@ class ldump:
 
   # --------------------------------------------------------------------
   # map atom column names
-  
+
   def map(self,*pairs):
     if len(pairs) % 2 != 0:
       raise StandardError, "ldump map() requires pairs of mappings"
@@ -263,7 +263,7 @@ class ldump:
         del self.snaps[i]
       else:
         i += 1
-  
+
   # --------------------------------------------------------------------
   # return list of lines to viz for snapshot isnap
   # if called with flag, then index is timestep, so convert to snapshot index
@@ -291,7 +291,7 @@ class ldump:
 
     # create line list from id,type,end1x,end1y,end2x,end2y
     # don't add line if all 4 values are 0 since not a line
-    
+
     lines = []
     for i in xrange(snap.natoms):
       atom = snap.atoms[i]
@@ -322,7 +322,7 @@ class ldump:
     # idump = index of my line I in dump's atoms
     # jdump = atom J in dump's atoms that atom I was owrapped on
     # delx,dely = offset applied to atom I and thus to line I
-    
+
     for i in xrange(snap.natoms):
       tag = atoms[i][id]
       idump = idsdump[tag]

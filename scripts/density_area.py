@@ -1,4 +1,4 @@
-#!/usr/bin/python 
+#!/usr/bin/python
 
 # Script:  density_area.py
 # Purpose: binned atom density by atom type and running area under the curve
@@ -46,19 +46,19 @@ while 1:
     bin = nbins * [0]
     for i in xrange(nbins): bin[i] = ntypes * [0]
     first = 0
-    
+
   box = (d.snaps[-1].xlo,d.snaps[-1].ylo,d.snaps[-1].zlo,
          d.snaps[-1].xhi,d.snaps[-1].yhi,d.snaps[-1].zhi)
-  vol = (box[3] - box[0]) * (box[4] - box[1]) * (box[5] - box[2]) 
+  vol = (box[3] - box[0]) * (box[4] - box[1]) * (box[5] - box[2])
 
   if direction == "x": type,x = d.vecs(time,"type","x")
   elif direction == "y": type,x = d.vecs(time,"type","y")
   elif direction == "z": type,x = d.vecs(time,"type","z")
-  
+
   type = map(int,type)
   natoms = len(type)
   for i in xrange(natoms): type[i] -= 1
-  
+
   for i in xrange(natoms):
     ibin = int(nbins*x[i] + 0.5)
     if (ibin < 0): ibin += nbins
@@ -66,12 +66,12 @@ while 1:
     bin[ibin][type[i]] += nbins/vol
   nsnaps += 1
   print time,
-  
+
 print
 print "Printing ",direction,"-directional density distribution in mol/L to", \
       outfile
 conversion = 1660.53873              # convert from atoms/Angs^3 to mol/L
-    
+
 # Output as x, density_1, area_1, ...
 
 fp = open(outfile,"w")
@@ -93,5 +93,5 @@ for i in xrange(nbins):
       yden[i][j] = conversion*bin[i][j]/nsnaps
       sum[j] += 0.5 * (xden[i] - xden[i-1]) * (yden[i][j] + yden[i-1][j])
       print >>fp, yden[i][j], sum[j],
-  print >>fp 
+  print >>fp
 fp.close()

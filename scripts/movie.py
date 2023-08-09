@@ -4,7 +4,7 @@
 # Purpose: create images from LAMMPS dump snapshots
 # Syntax:  movie.py raster/svg theta phi dump.1 dump.2 ...
 #          raster/svg = style of image to create
-#	   theta/phi = vertical (z) and azimuthal angle to view from
+#          theta/phi = vertical (z) and azimuthal angle to view from
 #          files = one or more dump files
 # Example: movie.py svg 60 130 dump.*
 # Author:  Steve Plimpton (Sandia)

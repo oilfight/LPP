@@ -3,7 +3,7 @@
 #
 # Copyright (2005) Sandia Corporation.  Under the terms of Contract
 # DE-AC04-94AL85000 with Sandia Corporation, the U.S. Government retains
-# certain rights in this software.  This software is distributed under 
+# certain rights in this software.  This software is distributed under
 # the GNU General Public License.
 
 # patch tool
@@ -13,10 +13,10 @@ oneline = "Create patchy Lennard-Jones particles for LAMMPS input"
 docstr = """
 p = patch(vfrac)           setup box with a specified volume fraction
 p = patch(vfrac,1,1,2)     x,y,z = aspect ratio of box (def = 1,1,1)
-    
-p.seed = 48379		   set random # seed (def = 12345)
-p.randomized = 0	   1 = choose next particle randomly, 0 = as generated
-p.dim = 2		   set dimension of created box (def = 3)
+
+p.seed = 48379             set random # seed (def = 12345)
+p.randomized = 0           1 = choose next particle randomly, 0 = as generated
+p.dim = 2                  set dimension of created box (def = 3)
 p.blen = 0.97              set length of tether bonds (def = 0.97)
 p.dmin = 1.02              set min r from i-1 to i+1 tether site (def = 1.02)
 p.lattice = [Nx,Ny,Nz]     generate Nx by Ny by Nz lattice of particles
@@ -25,7 +25,7 @@ p.lattice = [Nx,Ny,Nz]     generate Nx by Ny by Nz lattice of particles
   lattice = [0,0,0] = generate N particles randomly, default
 
 p.build(100,"hex2",1,2,3)  create 100 "hex2" particles with types 1,2,3
-  
+
   can be invoked multiple times
   keywords:
     c60hex2: diam,1,2,3 = C-60 with 2 hex patches and ctr part, types 1,2,3
@@ -46,7 +46,7 @@ p.build(100,"hex2",1,2,3)  create 100 "hex2" particles with types 1,2,3
                                  from Alo to Ahi and Blo to Bhi, line type m
     linetri: Alo,Ahi,Blo,Bhi,m = 3-line 2d triangle with random base
                                  from Alo to Ahi and height Blo to Bhi, type m
-    
+
 p.write("data.patch")      write out system to LAMMPS data file
 """
 
@@ -69,7 +69,7 @@ from data import data
 # Class definition
 
 class patch:
-  
+
   # --------------------------------------------------------------------
 
   def __init__(self,vfrac,*list):
@@ -179,7 +179,7 @@ class patch:
       #xp[0] = 1; xp[1] = 0; xp[2] = 0
       #yp[0] = 0; yp[1] = 1; yp[2] = 0
       #zp[0] = 0; zp[1] = 0; zp[2] = 1
-      
+
       # random origin or lattice site for new particle
 
       if latflag == 0:
@@ -195,15 +195,15 @@ class patch:
         zorig = self.zlo + iz*self.zprd/self.lattice[2]
 
       #xorig = 0; yorig = 0; zorig = 0
-        
+
       # unpack bonds in molecule before atoms so idatom = all previous atoms
-      
+
       for bond in molecule[1]:
         idbond += 1
         bonds.append([idbond,bond[0],bond[1]+idatom+1,bond[2]+idatom+1])
 
       # unpack triples in molecule as displacements from associated atom
-        
+
       for triple in molecule[2]: triples.append(triple)
 
       # unpack atoms in molecule
@@ -223,7 +223,7 @@ class patch:
           ix = iy = iz = 0
           x,y,z,ix,iy,iz = self.pbc(x,y,z,ix,iy,iz)
           atoms.append([idatom,idmol,atom[0],x,y,z,ix,iy,iz])
-          
+
       elif self.style == "tri":
         for i,atom in enumerate(molecule[0]):
           idatom += 1
@@ -239,7 +239,7 @@ class patch:
           if not triples: triflag = 0
           else: triflag = 1
           atoms.append([idatom,idmol,atom[0],triflag,mass,x,y,z,ix,iy,iz])
-          
+
           if triflag:
             triple = triples[i]
             xtri = triple[0]
@@ -272,7 +272,7 @@ class patch:
 
     list = [atom[2] for atom in atoms]
     atypes = max(list)
-    
+
     d = data()
     d.title = "LAMMPS data file for Nanoparticles"
     d.headers["atoms"] = len(atoms)
@@ -345,7 +345,7 @@ class patch:
       if self.lattice[0]*self.lattice[1] != len(self.molecules):
         raise StandardError,"lattice inconsistent with # of molecules"
     else: latflag = 0
-    
+
     idatom = idbond = idmol = 0
     atoms = []
     bonds = []
@@ -357,10 +357,10 @@ class patch:
       if self.randomized: i = int(self.random()*len(self.molecules))
       else: i = 0
       molecule = self.molecules.pop(i)
-        
+
       idmol += 1
       segments = []
-      
+
       # xp[2],yp[2] = randomly oriented, normalized basis vectors
       # xp is in random direction
       # yp is (0,0,1) crossed into xp
@@ -387,15 +387,15 @@ class patch:
         xorig = self.xlo + ix*self.xprd/self.lattice[0]
         yorig = self.ylo + iy*self.yprd/self.lattice[1]
         zorig = 0.0
-        
+
       # unpack bonds in molecule before atoms so idatom = all previous atoms
-      
+
       for bond in molecule[1]:
         idbond += 1
         bonds.append([idbond,bond[0],bond[1]+idatom+1,bond[2]+idatom+1])
 
       # unpack segments in molecule as displacements from associated atom
-        
+
       for segment in molecule[3]: segments.append(segment)
 
       # unpack atoms in molecule
@@ -445,7 +445,7 @@ class patch:
             segment[2],segment[3],tmp = \
                 self.pbc_near(segment[2],segment[3],0,x,y,z)
             lines.append([idatom] + segment)
-            
+
     # create the data file
 
     list = [atom[2] for atom in atoms]
@@ -464,7 +464,7 @@ class patch:
     d.headers["zlo zhi"] = (self.zlo,self.zhi)
 
     # atoms section of data file
-    
+
     records = []
     if self.style == "molecular":
       for atom in atoms:
@@ -502,7 +502,7 @@ class patch:
 
   # --------------------------------------------------------------------
   # adjust x,y,z to be inside periodic box
-    
+
   def pbc(self,x,y,z,ix,iy,iz):
     if x < self.xlo:
       x += self.xprd
@@ -526,7 +526,7 @@ class patch:
 
   # --------------------------------------------------------------------
   # adjust xnew,ynew,znew to be near x,y,z in periodic sense
-    
+
   def pbc_near(self,xnew,ynew,znew,x,y,z):
     if x-xnew > 0.5*self.xprd: xnew += self.xprd
     elif xnew-x > 0.5*self.xprd: xnew -= self.xprd
@@ -540,7 +540,7 @@ class patch:
   # params = diam,type1,type2,type3
   # type1 = type of non-patch atoms, type2 = type of patch atoms
   # type3 = type of center-of-sphere atom
-  
+
   def c60hex2(self,*params):
     template = BUCKY_60
     diam = params[0]
@@ -549,19 +549,19 @@ class patch:
     atoms = make_sphere(template,diam,params[1],patches)
     volume = 4.0/3.0 * pi * diam*diam*diam/8
     return atoms,[],[],[],volume
-  
+
   # --------------------------------------------------------------------
   # params = diam,type1,type2
   # type1 = type of large center atom, type2 = type of hex patch atoms
-  
+
   def hex2(self,*params):
     diam = params[0]
     type1 = params[1]
     type2 = params[2]
-    
+
     atoms = []
     atoms.append([type1,0.0,0.0,0.0])
-    
+
     atoms.append(atom_on_sphere(diam,type2,0.5*diam,0.0,0.0))
     atoms.append(atom_on_sphere(diam,type2,0.5*diam,1.0,0.0))
     atoms.append(atom_on_sphere(diam,type2,0.5*diam,-1.0,0.0))
@@ -580,19 +580,19 @@ class patch:
 
     volume = 4.0/3.0 * pi * diam*diam*diam/8
     return atoms,[],[],[],volume
-  
+
   # --------------------------------------------------------------------
   # params = diam,type1,type2
   # type1 = type of large center atom, type2 = type of hex patch atoms
-  
+
   def hex4(self,*params):
     diam = params[0]
     type1 = params[1]
     type2 = params[2]
-    
+
     atoms = []
     atoms.append([type1,0.0,0.0,0.0])
-    
+
     atoms.append(atom_on_sphere(diam,type2,0.5*diam,0.0,0.0))
     atoms.append(atom_on_sphere(diam,type2,0.5*diam,1.0,0.0))
     atoms.append(atom_on_sphere(diam,type2,0.5*diam,-1.0,0.0))
@@ -632,13 +632,13 @@ class patch:
   # params = diam,nring,type1,type2
   # nring = # of particles in ring
   # type1 = type of large center atom, type2 = type of ring atoms
-  
+
   def ring(self,*params):
     diam = params[0]
     nring = params[1]
     type1 = params[2]
     type2 = params[3]
-    
+
     atoms = []
     atoms.append([type1,0.0,0.0,0.0])
 
@@ -655,7 +655,7 @@ class patch:
   # m12,m12type = length of tethers on each side of ball (m12 = 0 = no tether)
   # set three types of bonds:
   #   1 = big to small, 2 = small to small, 3 = across two tethers
-  
+
   def ball(self,*params):
     diam = params[0]
     m1 = params[1]
@@ -684,14 +684,14 @@ class patch:
       if i == 0: bonds.append([1,0,1+m1])
       else: bonds.append([2,1+m1+i-1,1+m1+i])
     if m1 and m2: bonds.append([3,1,m1+1])
-      
+
     volume = 4.0/3.0 * pi * diam*diam*diam/8 + (m1+m2)*pi/6.0
     return atoms,bonds,[],[],volume
 
   # --------------------------------------------------------------------
   # params = type1,type2
   # type1 = type of 1/3 layers, type2 = type of middle layer
-  
+
   def tri5(self,*params):
     template = TRI5_HOLLOW
     nlayer = 3
@@ -724,12 +724,12 @@ class patch:
     ntype = params[3]
     m1type = params[4]
     m2type = params[5]
-    
+
     atoms = []
     for i in range(n):
       x,y,z = i*self.blen,0.0,0.0
       atoms.append([ntype,x,y,z])
-      
+
     if m1: atoms += tether(m1,m1type,self.blen,self.dmin,
                            atoms[n-2],atoms[n-1],self.random)
     if m2: atoms += tether(m2,m2type,self.blen,self.dmin,
@@ -742,7 +742,7 @@ class patch:
     for i in range(m2):
       if i == 0: bonds.append([1,0,n+m1])
       else: bonds.append([1,n+m1+i-1,n+m1+i])
-  
+
     volume = (n+m1+m2) * pi / 6.0
     return atoms,bonds,[],[],volume
 
@@ -750,7 +750,7 @@ class patch:
   # params = nsize,m1,m2,m3,ntype,m1type,m2type,m3type
   # nsize,ntype = size,type of triangle center
   # m123,m123type = length of tethers on each corner (m123 = 0 = no tether)
-  
+
   def tri(self,*params):
     nsize = params[0]
     m1 = params[1]
@@ -760,7 +760,7 @@ class patch:
     m1type = params[5]
     m2type = params[6]
     m3type = params[7]
-  
+
     atoms = []
     for i in range(nsize):
       n = nsize - i
@@ -794,7 +794,7 @@ class patch:
   # params = m1,m2,m3,m4,m5,m6,ntype,m1type,m2type,m3type,m4type,m5type,m6type
   # ntype = type of hex center
   # m123456,m123456type = length of tethers on each corner (m = 0 = no tether)
-  
+
   def hex(self,*params):
     m1 = params[0]
     m2 = params[1]
@@ -809,7 +809,7 @@ class patch:
     m4type = params[10]
     m5type = params[11]
     m6type = params[12]
-  
+
     atoms = []
     atoms.append([ntype,0.0,0.0,0.0])
     atoms.append([ntype,self.blen,0.0,0.0])
@@ -818,7 +818,7 @@ class patch:
     atoms.append([ntype,-self.blen/2.0,self.blen*sqrt(3.0)/2.0,0.0])
     atoms.append([ntype,self.blen/2.0,-self.blen*sqrt(3.0)/2.0,0.0])
     atoms.append([ntype,-self.blen/2.0,-self.blen*sqrt(3.0)/2.0,0.0])
-    
+
     n = len(atoms)
     if m1: atoms += tether(m1,m1type,self.blen,self.dmin,
                            atoms[0],atoms[1],self.random)
@@ -864,7 +864,7 @@ class patch:
   def dimer(self,*params):
     sep = params[0]
     type = params[1]
-    
+
     atoms = []
     x,y,z = 0.0,0.0,0.0
     atoms.append([type,x,y,z])
@@ -887,7 +887,7 @@ class patch:
     if n % 2 == 0:
       raise StandardError, "N in patch::star2d is not odd"
     middle = n/2
-    
+
     atoms = []
     x,y,z = 0.0,0.0,0.0
     atoms.append([type,x,y,z])
@@ -919,7 +919,7 @@ class patch:
 
     height = (m-1) * sep
     width = (n-1) * sep
-    
+
     atoms = []
     for i in range(n):
       x,y,z = i*sep,0.0,0.0
@@ -941,7 +941,7 @@ class patch:
   # params = a,type
   # a = edge length of tet
   # type = type of each vertex in tet
-  
+
   def tritet(self,*params):
     a = params[0]
     type = params[1]
@@ -985,7 +985,7 @@ class patch:
   # Blo to Bhi = bounds of edge length in y of box
   # Clo to Chi = bounds of edge length in y of box
   # type = type of each vertex in rectangular box
-  
+
   def tribox(self,*params):
     alo = params[0]
     ahi = params[1]
@@ -994,7 +994,7 @@ class patch:
     clo = params[4]
     chi = params[5]
     type = params[6]
-    
+
     a = alo + self.random()*(ahi-alo)
     b = blo + self.random()*(bhi-blo)
     c = clo + self.random()*(chi-clo)
@@ -1063,7 +1063,7 @@ class patch:
   # Alo to Ahi = bounds of edge length in x of rectangle
   # Blo to Bhi = bounds of edge length in y of rectangle
   # type = type of each line segment in rectangle
-  
+
   def linebox(self,*params):
     alo = float(params[0])
     ahi = float(params[1])
@@ -1073,7 +1073,7 @@ class patch:
 
     a = alo + self.random()*(ahi-alo)
     b = blo + self.random()*(bhi-blo)
-    
+
     atoms = []
     segments = []
 
@@ -1099,7 +1099,7 @@ class patch:
   # Alo to Ahi = bounds of base length in x of triangle
   # Blo to Bhi = bounds of heigth in y of isosceles triangle
   # type = type of each line segment in triangle
-  
+
   def linetri(self,*params):
     alo = float(params[0])
     ahi = float(params[1])
@@ -1109,7 +1109,7 @@ class patch:
 
     base = alo + self.random()*(ahi-alo)
     ht = blo + self.random()*(bhi-blo)
-    
+
     atoms = []
     segments = []
 
@@ -1208,7 +1208,7 @@ TRI5_HOLLOW = ((0,0,0),(1,0,0),(2,0,0),(3,0,0),(4,0,0),
                (1.0,2*sqrt(3)/2,0),(3.0,2*sqrt(3)/2,0),
                (1.5,3*sqrt(3)/2,0),(2.5,3*sqrt(3)/2,0),
                (2.0,4*sqrt(3)/2,0))
-               
+
 SIMPLE_7 = ((0,0,0),(1,0,0),(-1,0,0),(0,1,0),(0,-1,0),(0,0,1),(0,0,-1))
 
 # C60 with added center point at end

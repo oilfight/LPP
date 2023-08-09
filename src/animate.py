@@ -3,7 +3,7 @@
 #
 # Copyright (2005) Sandia Corporation.  Under the terms of Contract
 # DE-AC04-94AL85000 with Sandia Corporation, the U.S. Government retains
-# certain rights in this software.  This software is distributed under 
+# certain rights in this software.  This software is distributed under
 # the GNU General Public License.
 
 # animate tool
@@ -12,19 +12,19 @@ oneline = "Animate a series of image files"
 
 docstr = """
 a = animate("image*.png")     create GUI to animate set of image files
-    
+
 Actions (same as GUI widgets):
 
-a.first()		      go to first frame
+a.first()                     go to first frame
 a.prev()                      go to previous frame
 a.back()                      play backwards from current frame to start
-a.stop()         	      stop on current frame		
+a.stop()                      stop on current frame
 a.play()                      play from current frame to end
-a.next()		      go to next frame
-a.last()		      go to last frame
+a.next()                      go to next frame
+a.last()                      go to last frame
 
-a.frame(31)    	              set frame slider
-a.delay(0.4)     	      set delay slider
+a.frame(31)                   set frame slider
+a.delay(0.4)                  set delay slider
 """
 
 # History
@@ -63,7 +63,7 @@ class animate:
     self.delay_msec = 0
 
     # convert filestr into full list of files
-    
+
     list = str.split(filestr)
     self.files = []
     for file in list: self.files += glob.glob(file)
@@ -71,18 +71,18 @@ class animate:
     if self.nframes == 0: raise StandardError, "No files to load"
 
     # load all images
-    
+
     self.images = []
     for i in xrange(self.nframes):
       self.images.append(PhotoImage(file=self.files[i]))
 
     # grab Tk instance from main
-    
+
     from __main__ import tkroot
     self.tkroot = tkroot
 
     # GUI control window
-    
+
     win1 = Toplevel(tkroot)
     win1.title("Pizza.py animate tool")
 
@@ -95,7 +95,7 @@ class animate:
     button6 = Button(holder1,text=">",command=self.next).pack(side=LEFT)
     button7 = Button(holder1,text=">>",command=self.last).pack(side=LEFT)
     holder1.pack(side=TOP)
-    
+
     holder2 = Frame(win1)
     self.slider_frame = Scale(holder2,from_=0,to=self.nframes-1,
                               command=self.frame,orient=HORIZONTAL,
@@ -106,12 +106,12 @@ class animate:
     self.slider_frame.pack(side=LEFT)
     self.slider_delay.pack(side=LEFT)
     holder2.pack(side=TOP)
-    
+
     holder3 = Frame(win1)
     self.label_frame = Label(holder3)
     self.label_frame.pack(side=LEFT)
     holder3.pack(side=TOP)
-    
+
     # image window
 
     win2 = Toplevel(tkroot)
@@ -120,7 +120,7 @@ class animate:
     tkroot.update_idletasks()              # force window to appear
 
     # display 1st image
-    
+
     self.index = 0
     self.display(self.index)
 
@@ -135,19 +135,19 @@ class animate:
   def last(self):
     self.index = self.nframes - 1
     self.display(self.index)
-  
+
   # --------------------------------------------------------------------
 
   def previous(self):
     if self.index > 0: self.index -= 1
     self.display(self.index)
-  
+
   # --------------------------------------------------------------------
 
   def next(self):
     if self.index < self.nframes - 1: self.index += 1
     self.display(self.index)
-  
+
   # --------------------------------------------------------------------
 
   def back(self):
@@ -157,7 +157,7 @@ class animate:
       self.index = self.nframes - 1
       self.display(self.index)
     self.loop()
-  
+
   # --------------------------------------------------------------------
 
   def play(self):
@@ -167,15 +167,15 @@ class animate:
       self.index = 0
       self.display(self.index)
     self.loop()
-  
+
   # --------------------------------------------------------------------
 
   def stop(self):
     self.loop_flag = 0
-  
+
   # --------------------------------------------------------------------
   # loop forward or back until end of animation
-  
+
   def loop(self):
     if self.loop_flag == 1 and self.index == self.nframes - 1:
       self.loop_flag = 0
@@ -190,7 +190,7 @@ class animate:
 
   # --------------------------------------------------------------------
   # display a frame corresponding to iframe
-  
+
   def display(self,iframe):
     self.image_pane.configure(image=self.images[iframe])
     self.slider_frame.set(iframe)
@@ -209,4 +209,4 @@ class animate:
     self.delay_value = float(value)
     self.slider_delay.set(self.delay_value)
     self.delay_msec = int(1000*self.delay_value)
-  
+

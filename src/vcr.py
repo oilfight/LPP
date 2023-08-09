@@ -3,7 +3,7 @@
 #
 # Copyright (2005) Sandia Corporation.  Under the terms of Contract
 # DE-AC04-94AL85000 with Sandia Corporation, the U.S. Government retains
-# certain rights in this software.  This software is distributed under 
+# certain rights in this software.  This software is distributed under
 # the GNU General Public License.
 
 # vcr tool
@@ -16,26 +16,26 @@ v.add(gl)                  add a gl window to vcr GUI
 
 Actions (same as GUI widgets):
 
-v.first()		   go to first frame
+v.first()                  go to first frame
 v.prev()                   go to previous frame
 v.back()                   play backwards from current frame to start
-v.stop()         	   stop on current frame		
+v.stop()                   stop on current frame
 v.play()                   play from current frame to end
-v.next()		   go to next frame
-v.last()		   go to last frame
+v.next()                   go to next frame
+v.last()                   go to last frame
 
-v.frame(31)    	           set frame slider
-v.delay(0.4)     	   set delay slider
-v.q(5)          	   set quality slider
+v.frame(31)                set frame slider
+v.delay(0.4)               set delay slider
+v.q(5)                     set quality slider
 
-v.xaxis()		   view scene from x axis
-v.yaxis()  		   view scene from y axis
-v.zaxis()		   view scene from z axis
-v.box()		 	   toggle bounding box
-v.axis() 	           toggle display of xyz axes
-v.norm()	           recenter and resize the view
-v.ortho()	           toggle ortho/perspective button
-v.reload()           	   reload all frames from gl viewer data files
+v.xaxis()                  view scene from x axis
+v.yaxis()                  view scene from y axis
+v.zaxis()                  view scene from z axis
+v.box()                    toggle bounding box
+v.axis()                   toggle display of xyz axes
+v.norm()                   recenter and resize the view
+v.ortho()                  toggle ortho/perspective button
+v.reload()                 reload all frames from gl viewer data files
 
 v.clipxlo(0.2)             clip scene at x lo fraction of box
 v.clipxhi(1.0)             clip at x hi
@@ -44,9 +44,9 @@ v.clipyhi(1.0)
 v.clipzlo(0.2)             clip in z
 v.clipzhi(1.0)
 
-v.save()		   save current scene to file.png
-v.file("image")		   set filename
-v.saveall()		   toggle save-all checkbox
+v.save()                   save current scene to file.png
+v.file("image")            set filename
+v.saveall()                toggle save-all checkbox
 """
 
 # History
@@ -108,7 +108,7 @@ class vcr:
     Button(frame1,text=">",command=self.next).pack(side=LEFT)
     Button(frame1,text=">>",command=self.last).pack(side=LEFT)
     frame1.pack()
-    
+
     frame2 = Frame(root)
     self.slider_frame = Scale(frame2,from_=0,to=self.nframes-1,
                               command=self.frame,orient=HORIZONTAL,
@@ -121,7 +121,7 @@ class vcr:
                               command=self.delay,orient=HORIZONTAL,
                               label="       Delay")
     self.slider_frame.pack(side=LEFT)
-    self.slider_quality.pack(side=LEFT) 
+    self.slider_quality.pack(side=LEFT)
     self.slider_delay.pack(side=LEFT)
     frame2.pack()
 
@@ -177,7 +177,7 @@ class vcr:
     Button(frame6,text="Save As:",command=self.save).pack(side=LEFT)
     self.entry_file = Entry(frame6,width = 16)
     self.entry_file.insert(0,"image")
-    self.entry_file.pack(side=LEFT) 
+    self.entry_file.pack(side=LEFT)
     self.button_save = Checkbutton(frame6,text="SaveAll",command=self.saveall)
     self.button_save.pack(side=LEFT)
     frame6.pack()
@@ -197,7 +197,7 @@ class vcr:
     frame8.pack()
 
     # display 1st image
-    
+
     self.index = 0
     self.display()
 
@@ -219,25 +219,25 @@ class vcr:
   def last(self):
     self.index = self.nframes - 1
     self.slider_frame.set(self.index)
-  
+
   # --------------------------------------------------------------------
 
   def next(self):
     if self.index < self.nframes - 1:
       self.index += 1
       self.slider_frame.set(self.index)
-  
+
   # --------------------------------------------------------------------
 
   def previous(self):
     if self.index > 0:
       self.index -= 1
       self.slider_frame.set(self.index)
-  
+
   # --------------------------------------------------------------------
   # play backward loop
   # disable GL caching while animating
-  
+
   def back(self):
     if self.loop_flag != 0: return
     self.loop_flag = -1
@@ -248,7 +248,7 @@ class vcr:
       self.tkroot.update()
     if self.saveflag: self.saveloop(0)
     self.tkroot.after(self.delay_msec,self.loop)
-  
+
   # --------------------------------------------------------------------
   # play forward loop
   # disable GL caching while animating
@@ -271,11 +271,11 @@ class vcr:
   def stop(self):
     self.loop_flag = 0
     for view in self.viewlist: view.cache = 1
-  
+
   # --------------------------------------------------------------------
   # loop forward or back until end of animation
   # if save flag is set, change file name and save snapshots
-  
+
   def loop(self):
     if self.loop_flag == 1 and self.index == self.nframes - 1:
       self.loop_flag = 0
@@ -292,7 +292,7 @@ class vcr:
     # since slider_frame already called it
     # but seems to be necessary before GL save() saves window to file
     # else get previous image saved into file at each frame
-    
+
     if self.saveflag:
       for view in self.viewlist: time,natoms = view.display(self.index)
       self.saveloop(1)
@@ -309,7 +309,7 @@ class vcr:
   def frame(self,value):
     self.index = int(value)
     self.display()
-  
+
   # --------------------------------------------------------------------
 
   def delay(self,value):
@@ -357,7 +357,7 @@ class vcr:
     else:
       self.boxflag = 1
       for view in self.viewlist: view.box(1)
-  
+
   # --------------------------------------------------------------------
 
   def axis(self):
@@ -367,7 +367,7 @@ class vcr:
     else:
       self.axisflag = 1
       for view in self.viewlist: view.axis(1)
-      
+
   # --------------------------------------------------------------------
 
   def recenter(self):
@@ -386,7 +386,7 @@ class vcr:
       self.orthoflag = 1
       self.button_ortho.config(text="Persp")
       for view in self.viewlist: view.ortho(1)
-  
+
   # --------------------------------------------------------------------
 
   def reload(self):
@@ -449,7 +449,7 @@ class vcr:
 
   # --------------------------------------------------------------------
   # set filename for saving
-  
+
   def file(self,newtext):
     oldtext = self.entry_file.get()
     self.entry_file.delete(0,len(oldtext))
@@ -457,7 +457,7 @@ class vcr:
 
   # --------------------------------------------------------------------
   # toggle save all checkbox
-  
+
   def saveall(self):
     if self.saveflag:
       self.saveflag = 0
@@ -465,11 +465,11 @@ class vcr:
     else:
       self.saveflag = 1
       self.button_save.select()
-  
+
   # --------------------------------------------------------------------
   # save current image to file
   # if multiple windows change filenames to file.0.png, file.1.png, etc
-  
+
   def save(self):
     file = self.entry_file.get()
     if len(self.viewlist) == 1:
@@ -485,7 +485,7 @@ class vcr:
   # --------------------------------------------------------------------
   # save images when in a play/back loop
   # flag 0 = first save, flag 1 = continuing save, flag -1 = stop
-  
+
   def saveloop(self,flag):
     if flag == -1:
       self.file(self.fileroot)
@@ -502,7 +502,7 @@ class vcr:
 
   # --------------------------------------------------------------------
   # display index frame and set status strings
-  
+
   def display(self):
     for view in self.viewlist: time,natoms = view.display(self.index)
     self.label_frame.config(text="Frame: %d" % self.index)

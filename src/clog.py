@@ -3,7 +3,7 @@
 #
 # Copyright (2005) Sandia Corporation.  Under the terms of Contract
 # DE-AC04-94AL85000 with Sandia Corporation, the U.S. Government retains
-# certain rights in this software.  This software is distributed under 
+# certain rights in this software.  This software is distributed under
 # the GNU General Public License.
 
 # clog tool
@@ -21,12 +21,12 @@ c = clog("log.cell","",0)            3rd arg = average all runs
   if specify 2nd arg, it delimits a time section
   no 2nd arg or empty string, use default which is ChemCell specific
   if specify any 3rd arg, average all runs, assume all start at time 0
-  
+
 nvec = c.nvec                        # of vectors of thermo info
 nlen = c.nlen                        length of each vectors
 names = c.names                      list of vector names
 a,b,... = c.get("A","B",...)         return one or more vectors of values
-c.write("file.txt")	 	     write all vectors to a file
+c.write("file.txt")                  write all vectors to a file
 c.write("file.txt","A","B",...)      write listed vectors to a file
 
   get and write allow abbreviated (uniquely) vector names
@@ -78,12 +78,12 @@ class clog:
 
     if len(list) > 1 and len(list[1]): self.firststr = list[1]
     if len(list) == 3: self.ave = 1
-    
+
     self.read_all()
 
   # --------------------------------------------------------------------
   # read all log data from all files
-  
+
   def read_all(self):
     self.read_header(self.flist[0])
     if self.nvec == 0: raise StandardError,"log file has no values"
@@ -117,9 +117,9 @@ class clog:
       else:
         count = 0
         for i in range(self.nvec):
-	  if self.names[i].find(key) == 0:
-	    count += 1
-	    index = i
+          if self.names[i].find(key) == 0:
+            count += 1
+            index = i
         if count == 1:
           map.append(index)
         else:
@@ -145,9 +145,9 @@ class clog:
         else:
           count = 0
           for i in range(self.nvec):
-	    if self.names[i].find(key) == 0:
-	      count += 1
-	      index = i
+            if self.names[i].find(key) == 0:
+              count += 1
+              index = i
           if count == 1:
             map.append(index)
           else:
@@ -205,7 +205,7 @@ class clog:
 
     self.nlen = nlen
     self.data = data
-  
+
   # --------------------------------------------------------------------
 
   def read_header(self,file):
@@ -261,38 +261,38 @@ class clog:
       elif s1 >= 0 and s2 >= 0 and s2 < s1:  # found s1,s2 with s2 before s1
         s1 = 0
       elif s1 == -1 and s2 >= 0:             # found s2, but no s1
-	last = 1
+        last = 1
         s1 = 0
       elif s1 >= 0 and s2 == -1:             # found s1, but no s2
         last = 1
         s1 = txt.find("\n",s1) + 1
         s2 = txt.rfind("\n",s1) + 1
-	eof -= len(txt) - s2
+        eof -= len(txt) - s2
       elif s1 == -1 and s2 == -1:            # found neither
                                              # could be end-of-file section
-					     # or entire read was one chunk
+                                             # or entire read was one chunk
 
         if txt.find("Loop time of",start) == start:   # end of file, so exit
-	  eof -= len(txt) - start                     # reset eof to "Loop"
-	  break
+          eof -= len(txt) - start                     # reset eof to "Loop"
+          break
 
-	last = 1                                      # entire read is a chunk
+        last = 1                                      # entire read is a chunk
         s1 = 0
         s2 = txt.rfind("\n",s1) + 1
-	eof -= len(txt) - s2
-	if s1 == s2: break
+        eof -= len(txt) - s2
+        if s1 == s2: break
 
       chunk = txt[s1:s2-1]
       start = s2
-      
+
       # split chunk into entries
       # parse each entry for numeric fields, append to data
-  
+
       lines = chunk.split("\n")
       for line in lines:
         words = line.split()
         self.data.append(map(float,words))
-  
+
       # print last timestep of chunk
 
       print int(self.data[len(self.data)-1][0]),

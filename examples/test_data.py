@@ -1,5 +1,5 @@
 # simple test of data tool
-# requires files/data.micelle
+# requires files/data.micelle and dump.micelle
 # creates tmp.data
 
 d = data("files/data.micelle")
@@ -24,7 +24,7 @@ while 1:
   index,time,flag = d.iterator(flag)
   if flag == -1: break
   time,box,atoms,bonds,tris,lines= d.viz(index)
-  
+
 d.write("tmp.data")
 
 print "all done ... type CTRL-D to exit Pizza.py"

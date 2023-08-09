@@ -4,10 +4,10 @@ A simple routine to load in a LIGGGHTS hybrid dump file containing
 contact and contact force data and convert into a .vtk unstructured
 grid which can be used to visualise the force network. This routine
 also writes the length of the connection between particles, in order
-to be able to filter out incorrect connections (produced by the 
+to be able to filter out incorrect connections (produced by the
 "deform" fix)
 
-This routine is based on Mark Bentley's dump2force (Space Research Institute, 
+This routine is based on Mark Bentley's dump2force (Space Research Institute,
 Austrian Academy of Sciences, mark.bentley@oeaw.ac.at)
 
 contributing author: Stefan Radl, TU Graz (radl@tugraz.at)
@@ -39,7 +39,7 @@ import sys, os
 # Check for command line arguments
 if len(sys.argv) != 2:
         sys.exit('Usage: dump2force.py <filename>, where filename is a SINGLE filename; typically dump.<runname>')
-       
+
 elif len(sys.argv) == 2: # we have one input param, that should be parsed as a filename
     filename = str(sys.argv[1])
     if not os.path.isfile(filename):
@@ -101,7 +101,7 @@ while timestep >= 0:
     # one datasets has some missing, data for the previous timestep are still displayed -
     # this means that it is better here to generate "empty" files for these timesteps.
 
-    if forcedata.snaps[fileindex].natoms == 0:  
+    if forcedata.snaps[fileindex].natoms == 0:
         vtufile = fileprefix+'_'+str(timestep)+'.vtu'
         vtufile = os.path.join(outputdir,vtufile)
         vtuwrite = file(vtufile,'w')
@@ -118,7 +118,7 @@ while timestep >= 0:
         </Piece>
 </UnstructuredGrid>
 </VTKFile>""")
-       
+
     else:
         # ******************************************
         # Cell and connection lists
@@ -168,7 +168,7 @@ while timestep >= 0:
                            -np.array(forcedata.snaps[fileindex].atoms[:,forcedata.names["y2"]],dtype=np.float64))**2 \
                            + \
                            (np.array(forcedata.snaps[fileindex].atoms[:,forcedata.names["z1"]],dtype=np.float64) \
-                           -np.array(forcedata.snaps[fileindex].atoms[:,forcedata.names["z2"]],dtype=np.float64))**2 
+                           -np.array(forcedata.snaps[fileindex].atoms[:,forcedata.names["z2"]],dtype=np.float64))**2
         connectionLength = np.sqrt(connectionLength)
 
 
@@ -217,7 +217,7 @@ while timestep >= 0:
         y = np.zeros( npoints, dtype=np.float64)
         z = np.zeros( npoints, dtype=np.float64)
 
-        counter = 0  
+        counter = 0
         for id in ids:
             if id in id1:
                 index = id1.index(id)
@@ -229,10 +229,10 @@ while timestep >= 0:
                 xtemp,ytemp,ztemp = forcedata.snaps[fileindex].atoms[index,forcedata.names["x2"]], \
                                     forcedata.snaps[fileindex].atoms[index,forcedata.names["y2"]], \
                                     forcedata.snaps[fileindex].atoms[index,forcedata.names["z2"]]
-           
+
             x[counter]=xtemp
             y[counter]=ytemp
-            z[counter]=ztemp          
+            z[counter]=ztemp
             counter += 1
 
         # Now create the connectivity list - this corresponds to pairs of IDs, but referencing
@@ -241,7 +241,7 @@ while timestep >= 0:
 
         # If the periodic flag is set for a given interactions, DO NOT connect the points
         # (to avoid lines that cross the simulation domain)
-           
+
         # Mask out periodic interactions from the cell (connectivity) array
         # newList = [word for (word, mask) in zip(s,b) if mask]
         id1_masked = [ident for (ident,mask) in zip(id1,np.invert(periodic)) if mask]

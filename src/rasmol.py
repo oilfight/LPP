@@ -3,7 +3,7 @@
 #
 # Copyright (2005) Sandia Corporation.  Under the terms of Contract
 # DE-AC04-94AL85000 with Sandia Corporation, the U.S. Government retains
-# certain rights in this software.  This software is distributed under 
+# certain rights in this software.  This software is distributed under
 # the GNU General Public License.
 
 # rasmol tool
@@ -20,7 +20,7 @@ r.show(N,"my.rasmol")   use file as RasMol script
 
 r.all()                 make images of all selected snapshots with def script
 r.all("my.rasmol")      use file as RasMol script
-  
+
 r.run(N)                run RasMol interactivly on snapshot N
 r.run(N,"new.rasmol")                 adjust via mouse or RasMol commands
 r.run(N,"new.rasmol","old.rasmol")    type quit to save RasMol script file
@@ -57,7 +57,7 @@ class rasmol:
   def __init__(self,pdb):
     self.pdb = pdb
     self.file = "image"
-    
+
   # --------------------------------------------------------------------
 
   def start(self):
@@ -88,7 +88,7 @@ class rasmol:
   def show(self,*list):
 
     # create tmp.pdb with atom data
-    
+
     n = list[0]
     self.pdb.single(n,"tmp.pdb")
 
@@ -103,21 +103,21 @@ class rasmol:
       rasmol_text = rasmol_template
 
     # write rasmol_text to tmp.rasmol, substituting tmp.pdb for filename
-    
+
     f = open("tmp.rasmol","w")
     text = rasmol_text % "tmp.pdb"
     print >>f,text
     f.close()
 
     # run RasMol to create image in tmp.gif
-    
+
     self.start()
     self.__call__("source tmp.rasmol")
     self.__call__("write tmp.gif")
     self.stop()
 
     # display the image
-    
+
     cmd = "%s tmp.gif" % (PIZZA_DISPLAY)
     commands.getoutput(cmd)
 
@@ -134,7 +134,7 @@ class rasmol:
       rasmol_text = re.sub('load pdb ".*"','load pdb "%s"',rasmol_text)
     else:
       rasmol_text = rasmol_template
-      
+
     # iterate over all timesteps
     # write snapshot to tmpN.pdb
     # write RasMol input script to tmpN.rasmol
@@ -193,7 +193,7 @@ class rasmol:
 
     commands.getoutput("rm tmp*.pdb")
     commands.getoutput("rm tmp*.rasmol")
-    
+
   # --------------------------------------------------------------------
 
   def run(self,*list):
@@ -214,18 +214,18 @@ class rasmol:
       rasmol_text = rasmol_template
 
     # write rasmol_text to tmp.rasmol
-    
+
     f = open("tmp.rasmol","w")
     text = rasmol_template % "tmp.pdb"
     print >>f,text
     f.close()
 
     # run RasMol to create image in tmp.gif
-    
+
     self.start()
     self.__call__("source tmp.rasmol")
     self.enter()
-    
+
     if len(list) > 1: newfile = list[1]
     else: newfile = "tmp.rasmol"
     self.__call__("write script %s" % newfile)

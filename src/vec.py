@@ -3,7 +3,7 @@
 #
 # Copyright (2005) Sandia Corporation.  Under the terms of Contract
 # DE-AC04-94AL85000 with Sandia Corporation, the U.S. Government retains
-# certain rights in this software.  This software is distributed under 
+# certain rights in this software.  This software is distributed under
 # the GNU General Public License.
 
 # vec tool
@@ -17,12 +17,12 @@ v = vec(array)                      array = list of numeric vectors
   skip blank lines and lines that start with non-numeric characters
   example array with 2 vecs = [[1,2,3,4,5], [10,20,30,40,50]]
   assigns names = "col1", "col2", etc
-  
+
 nvec = v.nvec                       # of vectors
-nlen = v.nlen		            lengths of vectors
-names = v.names		            list of vector names
+nlen = v.nlen                       lengths of vectors
+names = v.names                     list of vector names
 x,y,... = l.get(1,"col2",...)       return one or more vectors of values
-l.write("file.txt")	            write all vectors to a file
+l.write("file.txt")                 write all vectors to a file
 l.write("file.txt","col1",7,...)    write listed vectors to a file
 
   get and write allow abbreviated (uniquely) vector names or digits (1-Nvec)
@@ -52,7 +52,7 @@ class vec:
 
   def __init__(self,data):
     self.data = []
-    
+
     if type(data) == types.StringType:
       lines = open(data,'r').readlines()
       for line in lines:
@@ -69,7 +69,7 @@ class vec:
         self.data.append(map(float,values))
     else:
       raise StandardError,"invalid argument to vec"
-    
+
     if len(self.data) == 0:
       self.nlen = self.nvec = 0
     else:
@@ -85,7 +85,7 @@ class vec:
       self.ptr[self.names[i]] = i
 
     print "read %d vectors of length %d" % (self.nvec,self.nlen)
-    
+
   # --------------------------------------------------------------------
 
   def get(self,*keys):
@@ -99,9 +99,9 @@ class vec:
       else:
         count = 0
         for i in range(self.nvec):
-	  if self.names[i].find(key) == 0:
-	    count += 1
-	    index = i
+          if self.names[i].find(key) == 0:
+            count += 1
+            index = i
         if count == 1:
           map.append(index)
         else:
@@ -127,9 +127,9 @@ class vec:
         else:
           count = 0
           for i in range(self.nvec):
-	    if self.names[i].find(key) == 0:
-	      count += 1
-	      index = i
+            if self.names[i].find(key) == 0:
+              count += 1
+              index = i
           if count == 1:
             map.append(index)
           else:

@@ -6,11 +6,11 @@
 # return distance sq between 2 atoms with PBC
 
 def distance(box,x1,y1,z1,x2,y2,z2):
-  
+
   delx = x2 - x1
   dely = y2 - y1
   delz = z2 - z1
-  
+
   xprd = box[3] - box[0]
   yprd = box[4] - box[1]
   zprd = box[5] - box[2]
@@ -30,7 +30,7 @@ def distance(box,x1,y1,z1,x2,y2,z2):
       delz += zprd
     else:
       delz -= zprd
-      
+
   distsq = delx*delx + dely*dely + delz*delz
   return distsq
 
@@ -39,10 +39,10 @@ def distance(box,x1,y1,z1,x2,y2,z2):
 if len(argv) < 3:
   raise StandardError,"group_energy.py data.file dump.file1 dump.file2 ..."
 
-dt = data(argv[1])				# data file
+dt = data(argv[1])                              # data file
 q = dt.get("Atoms",4)
 
-files = ' '.join(argv[2:])		        # dump files
+files = ' '.join(argv[2:])                      # dump files
 d = dump(files,0)
 d.map(1,"id",2,"type",3,"x",4,"y",5,"z")
 
@@ -97,8 +97,8 @@ while 1:
       rsq = distance(box,x1[i],y1[i],z1[i],x2[j],y2[j],z2[j])
       if rsq < maxcut_sq:
         eng_coul,eng_vdwl = p.single(rsq,typei,type2[j],qi,q[id2[j]])
-        e_coul_sum += eng_coul     
-        e_vdwl_sum += eng_vdwl    
+        e_coul_sum += eng_coul
+        e_vdwl_sum += eng_vdwl
   print "eng_coul = %g at timestep %d" % (e_coul_sum,time)
   print "eng_vdwl = %g at timestep %d" % (e_vdwl_sum,time)
 

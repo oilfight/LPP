@@ -3,7 +3,7 @@
 #
 # Copyright (2005) Sandia Corporation.  Under the terms of Contract
 # DE-AC04-94AL85000 with Sandia Corporation, the U.S. Government retains
-# certain rights in this software.  This software is distributed under 
+# certain rights in this software.  This software is distributed under
 # the GNU General Public License.
 
 # dump tool
@@ -12,15 +12,15 @@ oneline = "Read, write, manipulate dump files and particle attributes"
 
 docstr = """
 d = dump("dump.one")              read in one or more dump files
-d = dump("dump.1 dump.2.gz")	  can be gzipped
-d = dump("dump.*")		  wildcard expands to multiple files
-d = dump("dump.*",0)		  two args = store filenames, but don't read
+d = dump("dump.1 dump.2.gz")      can be gzipped
+d = dump("dump.*")                wildcard expands to multiple files
+d = dump("dump.*",0)              two args = store filenames, but don't read
 
   incomplete and duplicate snapshots are deleted
   if atoms have 5 or 8 columns, assign id,type,x,y,z (ix,iy,iz)
   atoms will be unscaled if stored in files as scaled
 
-time = d.next()             	  read next snapshot from dump files
+time = d.next()                   read next snapshot from dump files
 
   used with 2-argument constructor to allow reading snapshots one-at-a-time
   snapshot will be skipped only if another snapshot has same time stamp
@@ -31,21 +31,21 @@ time = d.next()             	  read next snapshot from dump files
 d.map(1,"id",3,"x")               assign names to atom columns (1-N)
 
   not needed if dump file is self-describing
-  
-d.tselect.all()			  select all timesteps
-d.tselect.one(N)		  select only timestep N
-d.tselect.none()		  deselect all timesteps
-d.tselect.skip(M)		  select every Mth step
+
+d.tselect.all()                   select all timesteps
+d.tselect.one(N)                  select only timestep N
+d.tselect.none()                  deselect all timesteps
+d.tselect.skip(M)                 select every Mth step
 d.tselect.test("$t >= 100 and $t < 10000")      select matching timesteps
-d.delete()	      	      	  delete non-selected timesteps
+d.delete()                        delete non-selected timesteps
 
   selecting a timestep also selects all atoms in the timestep
   skip() and test() only select from currently selected timesteps
   test() uses a Python Boolean expression with $t for timestep value
     Python comparison syntax: == != < > <= >= and or
 
-d.aselect.all()	      	                      select all atoms in all steps
-d.aselect.all(N)      	                      select all atoms in one step
+d.aselect.all()                               select all atoms in all steps
+d.aselect.all(N)                              select all atoms in one step
 d.aselect.test("$id > 100 and $type == 2")    select match atoms in all steps
 d.aselect.test("$id > 100 and $type == 2",N)  select matching atoms in one step
 
@@ -56,24 +56,24 @@ d.aselect.test("$id > 100 and $type == 2",N)  select matching atoms in one step
     Python comparison syntax: == != < > <= >= and or
     $name must end with a space
 
-d.write("file")	   	           write selected steps/atoms to dump file
-d.write("file",head,app)	   write selected steps/atoms to dump file
-d.scatter("tmp")		   write selected steps/atoms to multiple files
+d.write("file")                    write selected steps/atoms to dump file
+d.write("file",head,app)           write selected steps/atoms to dump file
+d.scatter("tmp")                   write selected steps/atoms to multiple files
 
   write() can be specified with 2 additional flags
-    headd = 0/1 for no/yes snapshot header, app = 0/1 for write vs append
+    head = 0/1 for no/yes snapshot header, app = 0/1 for write vs append
   scatter() files are given timestep suffix: e.g. tmp.0, tmp.100, etc
 
-d.scale() 	    	  	   scale x,y,z to 0-1 for all timesteps
-d.scale(100)			   scale atom coords for timestep N
-d.unscale()			   unscale x,y,z to box size to all timesteps
-d.unscale(1000)			   unscale atom coords for timestep N
-d.wrap()			   wrap x,y,z into periodic box via ix,iy,iz
-d.unwrap()			   unwrap x,y,z out of box via ix,iy,iz
-d.owrap("other")		   wrap x,y,z to same image as another atom
-d.sort()              	  	   sort atoms by atom ID in all selected steps
-d.sort("x")            	  	   sort atoms by column value in all steps
-d.sort(1000)			   sort atoms in timestep N
+d.scale()                          scale x,y,z to 0-1 for all timesteps
+d.scale(100)                       scale atom coords for timestep N
+d.unscale()                        unscale x,y,z to box size to all timesteps
+d.unscale(1000)                    unscale atom coords for timestep N
+d.wrap()                           wrap x,y,z into periodic box via ix,iy,iz
+d.unwrap()                         unwrap x,y,z out of box via ix,iy,iz
+d.owrap("other")                   wrap x,y,z to same image as another atom
+d.sort()                           sort atoms by atom ID in all selected steps
+d.sort("x")                        sort atoms by column value in all steps
+d.sort(1000)                       sort atoms in timestep N
 
   scale(), unscale(), wrap(), unwrap(), owrap() operate on all steps and atoms
   wrap(), unwrap(), owrap() require ix,iy,iz be defined
@@ -85,8 +85,8 @@ d.sort(1000)			   sort atoms in timestep N
 m1,m2 = d.minmax("type")               find min/max values for a column
 d.set("$ke = $vx * $vx + $vy * $vy")   set a column to a computed value
 d.setv("type",vector)                  set a column to a vector of values
-d.spread("ke",N,"color")	       2nd col = N ints spread over 1st col
-d.clone(1000,"color")	       	       clone timestep N values to other steps
+d.spread("ke",N,"color")               2nd col = N ints spread over 1st col
+d.clone(1000,"color")                  clone timestep N values to other steps
 
   minmax() operates on selected timesteps and atoms
   set() operates on selected timesteps and atoms
@@ -107,7 +107,7 @@ d.clone(1000,"color")	       	       clone timestep N values to other steps
     values at every timestep are set to value at timestep N for that atom ID
     useful for propagating a color map
 
-t = d.time()  	     	       	   return vector of selected timestep values
+t = d.time()                       return vector of selected timestep values
 fx,fy,... = d.atom(100,"fx","fy",...)   return vector(s) for atom ID N
 fx,fy,... = d.vecs(1000,"fx","fy",...)  return vector(s) for timestep N
 
@@ -117,7 +117,7 @@ fx,fy,... = d.vecs(1000,"fx","fy",...)  return vector(s) for timestep N
 index,time,flag = d.iterator(0/1)          loop over dump snapshots
 time,box,atoms,bonds,tris,lines = d.viz(index)   return list of viz objects
 d.atype = "color"                          set column returned as "type" by viz
-d.extra(obj)				   extract bond/tri/line info from obj
+d.extra(obj)                               extract bond/tri/line info from obj
 
   iterator() loops over selected timesteps
   iterator() called with arg = 0 first time, with arg = 1 on subsequent calls
@@ -137,7 +137,7 @@ d.extra(obj)				   extract bond/tri/line info from obj
       if extra() used to define lines, else NULL
   atype is column name viz() will return as atom type (def = "type")
   extra() extracts bonds/tris/lines from obj each time viz() is called
-    obj can be data object for bonds, cdata object for tris and lines, 
+    obj can be data object for bonds, cdata object for tris and lines,
       bdump object for bonds, mdump object for tris, ldump object for lines
 """
 
@@ -204,7 +204,7 @@ class dump:
   # --------------------------------------------------------------------
 
   def __init__(self,*input,**kwargs):
-     
+
     self.snaps = []
     self.nsnaps = self.nselect = 0
     self.names = {}
@@ -220,16 +220,16 @@ class dump:
     self.multiprocflag = 0
     self.fileNums = []
     self.objextra = None
-    
+
     outputfl = True
     if isinstance(input[0],dict): # multiprocessing code (the [0] comes from the asteriks in the argumentlist)
       dictionary = input[0]
-      
+
       # check whether to output or not
       if "debugMode" in dictionary: outputfl = dictionary["debugMode"]
-      
+
       if outputfl: print "number of subprocess:", os.getpid()
-      
+
       self.flist = dictionary["filelist"]
       self.multiprocflag = 1
       self.increment = 0
@@ -241,7 +241,7 @@ class dump:
       for word in words: self.flist += glob.glob(word)
       if len(self.flist) == 0 and len(input) == 1:
         raise StandardError,"no dump file specified"
-      
+
       if len(input) == 1:
         self.increment = 0
         self.read_all(output=outputfl)
@@ -256,11 +256,11 @@ class dump:
 
     # read all snapshots from each file
     # test for gzipped files
-    
+
     # check whether to output or not
     outputfl = True
     if "output" in kwargs: outputfl = kwargs["output"]
-    
+
     if outputfl: print "reading dump file..."
 
     for i, file in enumerate(self.flist):
@@ -292,7 +292,7 @@ class dump:
     self.tselect.all(output=outputfl)
 
     # set default names for atom columns if file wasn't self-describing
-    
+
     if len(self.snaps) == 0:
       if outputfl: print "no column assignments made"
     elif len(self.names):
@@ -300,7 +300,7 @@ class dump:
     else:
       if outputfl: print "no column assignments made"
       pass
-    
+
     # if snapshots are scaled, unscale them
 
     if (not self.names.has_key("x")) or \
@@ -331,15 +331,15 @@ class dump:
       snap = self.read_snapshot(f)
       if not snap:
         self.nextfile += 1
-	if self.nextfile == len(self.flist): return -1
+        if self.nextfile == len(self.flist): return -1
         f.close()
-	self.eof = 0
-	continue
+        self.eof = 0
+        continue
       self.eof = f.tell()
       f.close()
       try:
         self.findtime(snap.time)
-	continue
+        continue
       except: break
 
     # select the new snapshot with all its atoms
@@ -360,7 +360,7 @@ class dump:
   # assign column names if not already done and file is self-describing
   # set scale_original to 0/1/-1 for unscaled/scaled/unknown
   # convert xs,xu to x
-  
+
   def read_snapshot(self,f):
     try:
       snap = Snap()
@@ -407,7 +407,7 @@ class dump:
             else: self.names[words[i]] = i
           if xflag == 0 and yflag == 0 and zflag == 0: self.scale_original = 0
           if xflag == 1 and yflag == 1 and zflag == 1: self.scale_original = 1
-          
+
       if snap.natoms:
         words = f.readline().split()
         ncol = len(words)
@@ -430,7 +430,7 @@ class dump:
 
   # --------------------------------------------------------------------
   # map atom column names
-  
+
   def map(self,*pairs):
     if len(pairs) % 2 != 0:
       raise StandardError, "dump map() requires pairs of mappings"
@@ -507,7 +507,7 @@ class dump:
     atoms[:,x] = snap.xlo + atoms[:,x]*xprd
     atoms[:,y] = snap.ylo + atoms[:,y]*yprd
     atoms[:,z] = snap.zlo + atoms[:,z]*zprd
-  
+
   # --------------------------------------------------------------------
   # wrap coords from outside box to inside
 
@@ -520,7 +520,7 @@ class dump:
     ix = self.names["ix"]
     iy = self.names["iy"]
     iz = self.names["iz"]
-    
+
     for snap in self.snaps:
       xprd = snap.xhi - snap.xlo
       yprd = snap.yhi - snap.ylo
@@ -542,7 +542,7 @@ class dump:
     ix = self.names["ix"]
     iy = self.names["iy"]
     iz = self.names["iz"]
-    
+
     for snap in self.snaps:
       xprd = snap.xhi - snap.xlo
       yprd = snap.yhi - snap.ylo
@@ -555,10 +555,10 @@ class dump:
   # --------------------------------------------------------------------
   # wrap coords to same image as atom ID stored in "other" column
   # if dynamic extra lines or triangles defined, owrap them as well
-      
+
   def owrap(self,other):
     print "Wrapping to other ..."
-    
+
     id = self.names["id"]
     x = self.names["x"]
     y = self.names["y"]
@@ -584,10 +584,10 @@ class dump:
       # should bonds also be owrapped ?
       if self.lineflag == 2 or self.triflag == 2:
         self.objextra.owrap(snap.time,xprd,yprd,zprd,ids,atoms,iother,ix,iy,iz)
-          
+
   # --------------------------------------------------------------------
   # convert column names assignment to a string, in column order
-  
+
   def names2str(self):
     ncol = max(self.names.values()) #len(self.snaps[0].atoms[0])
     pairs = self.names.items()
@@ -603,11 +603,11 @@ class dump:
   # if arg = numeric, sort atoms in single step
 
   def sort(self,*list, **kwargs):
-    
+
     # check whether to output or not
     outputfl = True
     if "output" in kwargs: outputfl = kwargs["output"]
-    
+
     if len(list) == 0:
       if outputfl: print "Sorting selected snapshots ..."
       id = self.names["id"]
@@ -655,7 +655,7 @@ class dump:
         print >>f,snap.ylo,snap.yhi
         print >>f,snap.zlo,snap.zhi
         print >>f,"ITEM: ATOMS",namestr
-      
+
       atoms = snap.atoms
       nvalues = len(atoms[0])
       for i in xrange(snap.natoms):
@@ -679,7 +679,7 @@ class dump:
       if not snap.tselect: continue
       print snap.time,
       sys.stdout.flush()
-      
+
       file = root + "." + str(snap.time)
       f = open(file,"w")
       print >>f,"ITEM: TIMESTEP"
@@ -691,7 +691,7 @@ class dump:
       print >>f,snap.ylo,snap.yhi
       print >>f,snap.zlo,snap.zhi
       print >>f,"ITEM: ATOMS",namestr
-      
+
       atoms = snap.atoms
       nvalues = len(atoms[0])
       for i in xrange(snap.natoms):
@@ -733,7 +733,7 @@ class dump:
     lhs = list[0][1:]
     if not self.names.has_key(lhs):
       self.newcolumn(lhs)
-      
+
     for item in list:
       name = item[1:]
       column = self.names[name]
@@ -745,7 +745,7 @@ class dump:
       if not snap.tselect: continue
       for i in xrange(snap.natoms):
         if snap.aselect[i]: exec ceq
-          
+
   # --------------------------------------------------------------------
   # set a column value via an input vec for all selected snapshots/atoms
 
@@ -765,7 +765,7 @@ class dump:
         if snap.aselect[i]:
           atoms[i][icol] = vec[m]
           m += 1
-          
+
   # --------------------------------------------------------------------
   # clone value in col across selected timesteps for atoms with same ID
 
@@ -831,7 +831,7 @@ class dump:
       columns.append(self.names[name])
       values.append(self.nselect * [0])
     ncol = len(columns)
-    
+
     id = self.names["id"]
     m = 0
     for snap in self.snaps:
@@ -847,13 +847,13 @@ class dump:
 
     if len(list) == 1: return values[0]
     else: return values
-  
+
   # --------------------------------------------------------------------
   # extract vector(s) of values for selected atoms at chosen timestep
 
   def vecs(self,n,*list):
     snap = self.snaps[self.findtime(n)]
-    
+
     if len(list) == 0:
       raise StandardError, "no columns specified"
     columns = []
@@ -908,7 +908,7 @@ class dump:
         del self.snaps[i]
       else:
         i += 1
-  
+
   # --------------------------------------------------------------------
   # iterate over selected snapshots
 
@@ -920,12 +920,12 @@ class dump:
         self.iterate = i
         return i,self.snaps[i].time,1
     return 0,0,-1
-  
+
   # --------------------------------------------------------------------
   # return list of atoms to viz for snapshot isnap
   # if called with flag, then index is timestep, so convert to snapshot index
   # augment with bonds, tris, lines if extra() was invoked
-  
+
   def viz(self,index,flag=0):
     if not flag: isnap = index
     else:
@@ -949,7 +949,7 @@ class dump:
 
     # create atom list needed by viz from id,type,x,y,z
     # need Numeric/Numpy mode here
-    
+
     atoms = []
     for i in xrange(snap.natoms):
       if not snap.aselect[i]: continue
@@ -989,7 +989,7 @@ class dump:
       if self.triflag == 1: tris = self.trilist
       elif self.triflag == 2:
         tmp1,tmp2,tmp3,tmp4,tris,tmp5 = self.objextra.viz(time,1)
-      
+
     # create list of lines from static or dynamic tri list
     # if dynamic, could eliminate lines for unselected atoms
 
@@ -1000,7 +1000,7 @@ class dump:
         tmp1,tmp2,tmp3,tmp4,tmp5,lines = self.objextra.viz(time,1)
 
     return time,box,atoms,bonds,tris,lines
-  
+
   # --------------------------------------------------------------------
 
   def findtime(self,n):
@@ -1045,7 +1045,7 @@ class dump:
   def extra(self,arg):
 
     # data object, grab bonds statically
-    
+
     if type(arg) is types.InstanceType and ".data" in str(arg.__class__):
       self.bondflag = 0
       try:
@@ -1062,7 +1062,7 @@ class dump:
         raise StandardError,"could not extract bonds from data object"
 
     # cdata object, grab tris and lines statically
-    
+
     elif type(arg) is types.InstanceType and ".cdata" in str(arg.__class__):
       self.triflag = self.lineflag = 0
       try:
@@ -1077,32 +1077,32 @@ class dump:
         raise StandardError,"could not extract tris/lines from cdata object"
 
     # mdump object, grab tris dynamically
-    
+
     elif type(arg) is types.InstanceType and ".mdump" in str(arg.__class__):
       self.triflag = 2
       self.objextra = arg
 
     # bdump object, grab bonds dynamically
-    
+
     elif type(arg) is types.InstanceType and ".bdump" in str(arg.__class__):
       self.bondflag = 2
       self.objextra = arg
 
     # ldump object, grab tris dynamically
-    
+
     elif type(arg) is types.InstanceType and ".ldump" in str(arg.__class__):
       self.lineflag = 2
       self.objextra = arg
 
     # tdump object, grab tris dynamically
-    
+
     elif type(arg) is types.InstanceType and ".tdump" in str(arg.__class__):
       self.triflag = 2
       self.objextra = arg
 
     else:
       raise StandardError,"unrecognized argument to dump.extra()"
-      
+
   # --------------------------------------------------------------------
 
   def compare_atom(self,a,b):
@@ -1111,7 +1111,7 @@ class dump:
     elif a[0] > b[0]:
       return 1
     else:
-      return 0  
+      return 0
 
 # --------------------------------------------------------------------
 # one snapshot
@@ -1126,15 +1126,15 @@ class tselect:
 
   def __init__(self,data):
     self.data = data
-    
+
   # --------------------------------------------------------------------
 
   def all(self,**kwargs):
-    
+
     # check whether to output or not
     outputfl = True
     if "output" in kwargs: outputfl = kwargs["output"]
-    
+
     data = self.data
     for snap in data.snaps:
       snap.tselect = 1
@@ -1178,7 +1178,7 @@ class tselect:
       data.nselect -= 1
     data.aselect.all()
     print "%d snapshots selected out of %d" % (data.nselect,data.nsnaps)
-  
+
   # --------------------------------------------------------------------
 
   def test(self,teststr):
@@ -1224,7 +1224,7 @@ class aselect:
     data = self.data
 
     # replace all $var with snap.atoms references and compile test string
-    
+
     pattern = "\$\w*"
     list = re.findall(pattern,teststr)
     for item in list:

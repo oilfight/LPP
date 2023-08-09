@@ -31,11 +31,11 @@ def distance(atom1,atom2,box):
   x2 = atom2[2]
   y2 = atom2[3]
   z2 = atom2[4]
-  
+
   delx = x2 - x1
   dely = y2 - y1
   delz = z2 - z1
-  
+
   xprd = box[3] - box[0]
   yprd = box[4] - box[1]
   zprd = box[5] - box[2]
@@ -55,7 +55,7 @@ def distance(atom1,atom2,box):
       delz += zprd
     else:
       delz -= zprd
-      
+
   distsq = delx*delx + dely*dely + delz*delz
   return distsq
 
@@ -92,7 +92,7 @@ while 1:
   sys.stdout.flush()
 
   # loop over all type1 atoms
-  
+
   n = len(atoms)
   for i in xrange(n):
     itype = atoms[i][1]
@@ -101,15 +101,15 @@ while 1:
 
     # loop over all type2 atoms
     # increment cluster count if distance is within cutoff
-    
+
     for j in xrange(n):
       jtype = atoms[j][1]
-      if jtype != type2 or i == j: continue 
+      if jtype != type2 or i == j: continue
       distsq = distance(atoms[i],atoms[j],box)
       if distsq < cutsq: ncount += 1
 
     # increment histogram count
-    
+
     if ncount >= nbin: cluster[nbin-1] += 1
     else: cluster[ncount] += 1
 
