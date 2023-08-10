@@ -11,7 +11,11 @@
 # Imports and external programs
 
 from __future__ import print_function, absolute_import
-import sys, os, subprocess, re, glob
+import sys, os, re, glob
+try:
+  import commands
+except ImportError:
+  import subprocess as commands
 from math import *
 try:
   from Tkinter import *
@@ -138,7 +142,7 @@ class image:
   def convert(self,file1,file2,switch=""):
     if file1.find('*') < 0 or file2.find('*') < 0:
       cmd = "%s %s %s %s" % (PIZZA_CONVERT,switch,file1,file2)
-      subprocess.getoutput(cmd)
+      commands.getoutput(cmd)
       return
 
     index = file1.index('*')
@@ -156,7 +160,7 @@ class image:
       cmd = "%s %s %s %s" % (PIZZA_CONVERT,switch,file1,file2)
       print(middle, end=' ')
       sys.stdout.flush()
-      subprocess.getoutput(cmd)
+      commands.getoutput(cmd)
     print()
 
   # --------------------------------------------------------------------
@@ -170,7 +174,7 @@ class image:
       if fileargs[i].find('*') < 0:
         cmd = "%s %s" % (PIZZA_MONTAGE,switch)
         for j in range(nsets): cmd += " %s" % fileargs[j]
-        subprocess.getoutput(cmd)
+        commands.getoutput(cmd)
         return
 
     nfiles = len(glob.glob(fileargs[0]))
@@ -194,7 +198,7 @@ class image:
       middle = re.search(expr,filesets[0][i]).group(1)
       fileN = "%s%s%s" % (preN,middle,postN)
       cmd += " %s" % fileN
-      subprocess.getoutput(cmd)
+      commands.getoutput(cmd)
       print(middle, end=' ')
       sys.stdout.flush()
     print()

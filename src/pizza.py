@@ -18,7 +18,7 @@
 # modules needed by pizza.py
 
 from __future__ import print_function, absolute_import
-import sys, subprocess, os, string, glob, re
+import sys, os, string, glob, re
 import time
 
 # Help strings:
@@ -70,11 +70,13 @@ except ImportError as exception:
 
 nodisplay = False
 try:
+  import Tkinter
+  tkroot = Tkinter.Tk()
+  tkroot.withdraw()
+except ImportError as exception:
   import tkinter
   tkroot = tkinter.Tk()
   tkroot.withdraw()
-except ImportError as exception:
-  nodisplay = True
   pass
 except Exception as exception:
   nodisplay = True

@@ -11,7 +11,7 @@
 # Imports and external programs
 
 from __future__ import print_function, absolute_import
-import sys, subprocess, re, glob, types
+import sys, re, glob, types
 from os import popen
 from math import *             # any function could be used by set()
 import os

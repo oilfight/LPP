@@ -11,7 +11,11 @@
 # Imports and external programs
 
 from __future__ import print_function, absolute_import
-import sys, os, subprocess, re, types
+import sys, os, re, types
+try:
+  import commands
+except ImportError:
+  import subprocess as commands
 from pdbfile import pdbfile
 
 oneline = "3d visualization via RasMol program"
@@ -120,7 +124,7 @@ class rasmol:
     # display the image
 
     cmd = "%s tmp.gif" % (PIZZA_DISPLAY)
-    subprocess.getoutput(cmd)
+    commands.getoutput(cmd)
 
   # --------------------------------------------------------------------
 
@@ -192,8 +196,8 @@ class rasmol:
 
     # clean up
 
-    subprocess.getoutput("rm tmp*.pdb")
-    subprocess.getoutput("rm tmp*.rasmol")
+    commands.getoutput("rm tmp*.pdb")
+    commands.getoutput("rm tmp*.rasmol")
 
   # --------------------------------------------------------------------
 

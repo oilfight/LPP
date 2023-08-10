@@ -11,7 +11,11 @@
 # Imports and external programs
 
 from __future__ import print_function, absolute_import
-import sys, os, subprocess, re
+import sys, os, re
+try:
+  import commands
+except ImportError:
+  import subprocess as commands
 from vizinfo import vizinfo
 from math import fabs,atan,cos,sin
 
@@ -233,7 +237,7 @@ class raster:
 
     self.single(0,self.file,box,atoms,bonds,tris,lines)
     cmd = "%s %s.png" % (PIZZA_DISPLAY,self.file)
-    subprocess.getoutput(cmd)
+    commands.getoutput(cmd)
 
   # --------------------------------------------------------------------
 
@@ -443,7 +447,7 @@ class raster:
     else:
       cmd = "cat tmp.r3d | %s -png %s.png" % (PIZZA_LABEL3D,file)
 
-    output = subprocess.getoutput(cmd)
+    output = commands.getoutput(cmd)
     return output
 
   # --------------------------------------------------------------------

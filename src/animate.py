@@ -10,8 +10,8 @@
 
 # Imports and external programs
 
-from __future__ import absolute_import
-import sys, os, subprocess, re, glob
+from __future__ import print_function, absolute_import
+import sys, os, re, glob
 try:
   from Tkinter import *
 except ImportError:

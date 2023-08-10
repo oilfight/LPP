@@ -11,7 +11,11 @@
 # Imports and external programs
 
 from __future__ import print_function, absolute_import
-import sys, os, subprocess, re
+import sys, os, re
+try:
+  import commands
+except ImportError:
+  import subprocess as commands
 import functools
 from vizinfo import vizinfo
 from math import sqrt,atan,cos,sin,fabs
@@ -204,7 +208,7 @@ class svg:
 
     self.single(self.file,box,atoms,bonds,tris,lines,1)
     cmd = "%s %s.svg" % (PIZZA_DISPLAY,self.file)
-    subprocess.getoutput(cmd)
+    commands.getoutput(cmd)
 
   # --------------------------------------------------------------------
 
