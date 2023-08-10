@@ -8,6 +8,12 @@
 
 # rasmol tool
 
+# Imports and external programs
+
+from __future__ import absolute_import
+import sys, os, subprocess, re, types
+from pdbfile import pdbfile
+
 oneline = "3d visualization via RasMol program"
 
 docstr = """
@@ -38,11 +44,6 @@ r.run(N,"new.rasmol","old.rasmol")    type quit to save RasMol script file
 
 # Variables
 
-# Imports and external programs
-
-import sys, os, commands, re, types
-from pdbfile import pdbfile
-
 try: from DEFAULTS import PIZZA_RASMOL
 except: PIZZA_RASMOL = "rasmol"
 try: from DEFAULTS import PIZZA_DISPLAY
@@ -67,7 +68,7 @@ class rasmol:
 
   def enter(self):
     while 1:
-      command = raw_input("rasmol> ")
+      command = input("rasmol> ")
       if command == "quit" or command == "exit": return
       self.__call__(command)
 
@@ -85,19 +86,19 @@ class rasmol:
 
   # --------------------------------------------------------------------
 
-  def show(self,*list):
+  def show(self,*arglist):
 
     # create tmp.pdb with atom data
 
-    n = list[0]
+    n = arglist[0]
     self.pdb.single(n,"tmp.pdb")
 
     # if RasMol input script specified, read it
     # replace load pdb "file" with load pdb "%s"
     # if no RasMol input script specified, use rasmol_template
 
-    if len(list) == 2:
-      rasmol_text = open(list[1],"r").read()
+    if len(arglist) == 2:
+      rasmol_text = open(arglist[1],"r").read()
       rasmol_text = re.sub('load pdb ".*"','load pdb "%s"',rasmol_text)
     else:
       rasmol_text = rasmol_template
@@ -106,7 +107,7 @@ class rasmol:
 
     f = open("tmp.rasmol","w")
     text = rasmol_text % "tmp.pdb"
-    print >>f,text
+    print(text, file=f)
     f.close()
 
     # run RasMol to create image in tmp.gif
@@ -119,18 +120,18 @@ class rasmol:
     # display the image
 
     cmd = "%s tmp.gif" % (PIZZA_DISPLAY)
-    commands.getoutput(cmd)
+    subprocess.getoutput(cmd)
 
   # --------------------------------------------------------------------
 
-  def all(self,*list):
+  def all(self,*arglist):
 
     # if RasMol script specified, read it
     # replace load pdb "file" with load pdb "%s"
     # if no RasMol script specified, just use rasmol_template
 
-    if len(list) == 1:
-      rasmol_text = open(list[0],"r").read()
+    if len(arglist) == 1:
+      rasmol_text = open(arglist[0],"r").read()
       rasmol_text = re.sub('load pdb ".*"','load pdb "%s"',rasmol_text)
     else:
       rasmol_text = rasmol_template
@@ -160,10 +161,10 @@ class rasmol:
       text = rasmol_text % file_pdb
       file_rasmol = "tmp%s.rasmol" % ncount
       f = open(file_rasmol,"w")
-      print >>f,text
+      print(text, file=f)
       f.close()
 
-      print time,
+      print(time, end=' ')
       sys.stdout.flush()
       n += 1
 
@@ -172,7 +173,7 @@ class rasmol:
     self.start()
 
     loop = n
-    for n in xrange(loop):
+    for n in range(loop):
       if n < 10:
         ncount = "000" + str(n)
       elif n < 100:
@@ -191,24 +192,24 @@ class rasmol:
 
     # clean up
 
-    commands.getoutput("rm tmp*.pdb")
-    commands.getoutput("rm tmp*.rasmol")
+    subprocess.getoutput("rm tmp*.pdb")
+    subprocess.getoutput("rm tmp*.rasmol")
 
   # --------------------------------------------------------------------
 
-  def run(self,*list):
+  def run(self,*arglist):
 
     # create tmp.pdb with atom data
 
-    n = list[0]
+    n = arglist[0]
     self.pdb.single(n,"tmp.pdb")
 
     # if RasMol script specified, read it
     # replace load pdb "file" with load pdb "%s"
     # if no RasMol script specified, just use rasmol_template
 
-    if len(list) == 3:
-      rasmol_text = open(list[2],"r").read()
+    if len(arglist) == 3:
+      rasmol_text = open(arglist[2],"r").read()
       rasmol_text = re.sub('load pdb ".*"','load pdb "%s"',rasmol_text)
     else:
       rasmol_text = rasmol_template
@@ -217,7 +218,7 @@ class rasmol:
 
     f = open("tmp.rasmol","w")
     text = rasmol_template % "tmp.pdb"
-    print >>f,text
+    print(text, file=f)
     f.close()
 
     # run RasMol to create image in tmp.gif
@@ -226,7 +227,7 @@ class rasmol:
     self.__call__("source tmp.rasmol")
     self.enter()
 
-    if len(list) > 1: newfile = list[1]
+    if len(arglist) > 1: newfile = arglist[1]
     else: newfile = "tmp.rasmol"
     self.__call__("write script %s" % newfile)
     self.stop()

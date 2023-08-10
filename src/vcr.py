@@ -8,6 +8,12 @@
 
 # vcr tool
 
+# Imports and external programs
+
+from __future__ import absolute_import
+from tkinter import *
+import types
+
 oneline = "VCR-style GUI for 3d interactive OpenGL visualization"
 
 docstr = """
@@ -64,11 +70,6 @@ v.saveall()                toggle save-all checkbox
 #   delay_value = delay between frames (secs)
 #   delay_msec = delay in millisec
 
-# Imports and external programs
-
-from Tkinter import *
-import types
-
 # Class definition
 
 class vcr:
@@ -88,7 +89,7 @@ class vcr:
     # load data for each viewer
     # if each viewer has different data set, nframes is for 1st viewer
 
-    if len(views) == 0: raise StandardError,"must have at least one GL viewer"
+    if len(views) == 0: raise Exception("must have at least one GL viewer")
     self.viewlist = []
     for view in views: self.viewlist.append(view)
     for view in self.viewlist: view.reload()
@@ -320,7 +321,7 @@ class vcr:
   # --------------------------------------------------------------------
 
   def q(self,value):
-    if type(value) is not types.IntType: value = self.slider_quality.get()
+    if type(value) is not int: value = self.slider_quality.get()
     self.slider_quality.set(value)
     for view in self.viewlist: view.q(value)
 

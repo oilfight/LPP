@@ -8,10 +8,17 @@
 
 # animate tool
 
+# Imports and external programs
+
+from __future__ import absolute_import
+import sys, os, subprocess, re, glob
+from tkinter import *
+
 oneline = "Animate a series of image files"
 
 docstr = """
 a = animate("image*.png")     create GUI to animate set of image files
+a = animate("image*.png",1)   2nd arg = sort filenames, 0 = no sort, def = 1
 
 Actions (same as GUI widgets):
 
@@ -45,11 +52,6 @@ a.delay(0.4)                  set delay slider
 #   delay_value = delay between frames (secs)
 #   delay_msec = delay in millisec
 
-# Imports and external programs
-
-import sys, os, commands, re, glob
-from Tkinter import *
-from ImageTk import PhotoImage
 
 # Class definition
 
@@ -57,23 +59,24 @@ class animate:
 
   # --------------------------------------------------------------------
 
-  def __init__(self,filestr):
+  def __init__(self,filestr,sortflag=1):
     self.loop_flag = 0
     self.delay_value = 0.0
     self.delay_msec = 0
 
     # convert filestr into full list of files
 
-    list = str.split(filestr)
+    flist = str.split(filestr)
     self.files = []
-    for file in list: self.files += glob.glob(file)
+    for file in flist: self.files += glob.glob(file)
     self.nframes = len(self.files)
-    if self.nframes == 0: raise StandardError, "No files to load"
+    if self.nframes == 0: raise Exception("No files to load")
+    if sortflag: self.files.sort()
 
     # load all images
 
     self.images = []
-    for i in xrange(self.nframes):
+    for i in range(self.nframes):
       self.images.append(PhotoImage(file=self.files[i]))
 
     # grab Tk instance from main

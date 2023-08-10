@@ -8,6 +8,12 @@
 
 # plotview tool
 
+# Imports and external programs
+
+from __future__ import absolute_import
+import sys, re, glob, time
+from tkinter import *
+
 oneline = "Plot multiple vectors from a data set"
 
 docstr = """
@@ -45,11 +51,6 @@ p.save()                save currently selected plot to file.eps
 #   checkbuttons = list of check button objects
 #   checkvars = list of status of check buttons
 #   checkold = list of status of check buttons before click
-
-# Imports and external programs
-
-import sys, re, glob, time
-from Tkinter import *
 
 # Class definition
 
@@ -148,7 +149,7 @@ class plotview:
 
   def save(self):
     n = self.radiovar.get()
-    if n == 0: raise StandardError,"no plot selected"
+    if n == 0: raise Exception("no plot selected")
     name = self.entry.get()
     self.plot.save(name)
 

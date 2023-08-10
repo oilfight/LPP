@@ -8,6 +8,11 @@
 
 # matlab tool
 
+# Imports and external programs
+
+from __future__ import print_function, division, absolute_import
+import types, os
+
 oneline = "Create plots via MatLab numerical analysis program"
 
 docstr = """
@@ -91,10 +96,6 @@ m.curve(N,'b','-','v')         set color, line style, symbol of curve N
 #   allow for alternate export command to name the variables from Python
 #     in MatLab and vice versa
 
-# Imports and external programs
-
-import types, os
-
 try: from DEFAULTS import PIZZA_MATLAB
 except: PIZZA_MATLAB = "matlab -nosplash -nodesktop -nojvm"
 
@@ -126,7 +127,7 @@ class matlab:
 
   def enter(self):
     while 1:
-      command = raw_input("matlab> ")
+      command = input("matlab> ")
       if command == "quit" or command == "exit": return
       self.__call__(command)
 
@@ -136,15 +137,15 @@ class matlab:
   def plot(self,*vectors):
     if len(vectors) == 1:
       file = self.file + ".%d.1" % self.current
-      linear = range(len(vectors[0]))
+      linear = list(range(len(vectors[0])))
       self.export(file,linear,vectors[0])
       self.figures[self.current-1].ncurves = 1
     else:
-      if len(vectors) % 2: raise StandardError,"vectors must come in pairs"
+      if len(vectors) % 2: raise Exception("vectors must come in pairs")
       for i in range(0,len(vectors),2):
-        file = self.file + ".%d.%d" % (self.current,i/2+1)
+        file = self.file + ".%d.%d" % (self.current,i//2+1)
         self.export(file,vectors[i],vectors[i+1])
-      self.figures[self.current-1].ncurves = len(vectors)/2
+      self.figures[self.current-1].ncurves = len(vectors)//2
     self.draw()
 
   # --------------------------------------------------------------------
@@ -174,13 +175,13 @@ class matlab:
   def export(self,filename,*vectors):
     n = len(vectors[0])
     for vector in vectors:
-      if len(vector) != n: raise StandardError,"vectors must be same length"
+      if len(vector) != n: raise Exception("vectors must be same length")
     f = open(filename,'w')
     nvec = len(vectors)
-    for i in xrange(n):
-      for j in xrange(nvec):
-        print >>f,vectors[j][i],
-      print >>f
+    for i in range(n):
+      for j in range(nvec):
+        print(vectors[j][i], end=' ', file=f)
+      print(file=f)
     f.close()
 
   # --------------------------------------------------------------------

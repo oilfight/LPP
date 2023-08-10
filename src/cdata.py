@@ -10,6 +10,14 @@
 
 # cdata tool
 
+# Imports and external programs
+
+from __future__ import print_function, division, absolute_import
+import sys, glob
+from os import popen
+from math import sqrt,pi,cos,sin,fabs
+from copy import deepcopy
+
 oneline = "Read, create, manipulate ChemCell data files"
 
 docstr = """
@@ -154,13 +162,6 @@ time,box,atoms,bonds,tris,lines = c.viz(index)   return list of viz objects
 #   ids = dictionary of IDs that points to object index
 #   objs = list of objects, style = REGION, SURFACE, GROUP, UNION
 
-# Imports and external programs
-
-import sys, glob
-from os import popen
-from math import sqrt,pi,cos,sin,fabs
-from copy import deepcopy
-
 try: from DEFAULTS import PIZZA_GUNZIP
 except: PIZZA_GUNZIP = "gunzip"
 
@@ -170,25 +171,25 @@ class cdata:
 
   # --------------------------------------------------------------------
 
-  def __init__(self,*list):
+  def __init__(self,*clist):
     self.nselect = 1
     self.ids = {}
     self.objs = []
     self.random = Random(12345)
 
-    if len(list): self.read(*list)
+    if len(clist): self.read(*clist)
 
   # --------------------------------------------------------------------
 
-  def read(self,*list):
+  def read(self,*inlist):
 
     # flist = list of all data file names
 
-    words = list[0].split()
+    words = inlist[0].split()
     flist = []
     for word in words: flist += glob.glob(word)
-    if len(flist) == 0 and len(list) == 1:
-      raise StandardError,"no data file specified"
+    if len(flist) == 0 and len(inlist) == 1:
+      raise Exception("no data file specified")
 
     for file in flist:
 
@@ -210,8 +211,8 @@ class cdata:
         elif line.find("facets") == 0: flag = "facets"
         elif line.find("region") == 0: flag = "region"
         else:
-          print "unknown line:",line
-          raise StandardError, "unrecognized ChemCell data file"
+          print("unknown line:",line)
+          raise Exception("unrecognized ChemCell data file")
 
         # create a surface object from set of triangles or facets
 
@@ -220,26 +221,26 @@ class cdata:
           nvert = int(nvert)
           ntri = int(ntri)
 
-          if self.ids.has_key(id):
-            raise StandardError,"ID %s is already in use" % id
+          if id in self.ids:
+            raise Exception("ID %s is already in use" % id)
 
           f.readline()
           vertices = []
-          for i in xrange(nvert):
-            list = f.readline().split()
-            vertices.append([float(value) for value in list[1:]])
+          for i in range(nvert):
+            inlist = f.readline().split()
+            vertices.append([float(value) for value in inlist[1:]])
           f.readline()
           triangles = []
-          for i in xrange(ntri):
-            list = f.readline().split()
-            triangles.append([int(value) for value in list[1:]])
+          for i in range(ntri):
+            inlist = f.readline().split()
+            triangles.append([int(value) for value in inlist[1:]])
 
           if flag == "triangles":
             f.readline()
             connections = []
-            for i in xrange(ntri):
-              list = f.readline().split()
-              connections.append([int(value) for value in list[1:]])
+            for i in range(ntri):
+              inlist = f.readline().split()
+              connections.append([int(value) for value in inlist[1:]])
           else:
             connections = connect(nvert,ntri,triangles)
 
@@ -256,7 +257,7 @@ class cdata:
           obj.connections = connections
           obj.center()
 
-          print id,
+          print(id, end=' ')
           sys.stdout.flush()
 
         # create a group object from list of particles
@@ -266,14 +267,14 @@ class cdata:
           id = words[1]
           npart = int(words[2])
 
-          if self.ids.has_key(id):
-            raise StandardError,"ID %s is already in use" % id
+          if id in self.ids:
+            raise Exception("ID %s is already in use" % id)
 
           f.readline()
           xyz = []
-          for i in xrange(npart):
-            list = f.readline().split()
-            xyz.append([float(value) for value in list[1:]])
+          for i in range(npart):
+            inlist = f.readline().split()
+            xyz.append([float(value) for value in inlist[1:]])
 
           obj = Group()
           obj.select = 1
@@ -287,7 +288,7 @@ class cdata:
           obj.xyz = xyz
           obj.center()
 
-          print id,
+          print(id, end=' ')
           sys.stdout.flush()
 
         # create a region object from ChemCell region command
@@ -310,18 +311,18 @@ class cdata:
           obj.id = id
           obj.style = REGION
 
-          print id,
+          print(id, end=' ')
           sys.stdout.flush()
 
       f.close()
-    print
+    print()
 
   # --------------------------------------------------------------------
   # create box region
 
   def box(self,id,*args):
-    if self.ids.has_key(id):
-      raise StandardError,"ID %s is already in use" % id
+    if id in self.ids:
+      raise Exception("ID %s is already in use" % id)
     obj = Box(*args)
     obj.select = 1
     self.ids[id] = len(self.objs)
@@ -334,8 +335,8 @@ class cdata:
   # create sphere region
 
   def sphere(self,id,*args):
-    if self.ids.has_key(id):
-      raise StandardError,"ID %s is already in use" % id
+    if id in self.ids:
+      raise Exception("ID %s is already in use" % id)
     obj = Sphere(*args)
     obj.select = 1
     self.ids[id] = len(self.objs)
@@ -348,8 +349,8 @@ class cdata:
   # create shell region
 
   def shell(self,id,*args):
-    if self.ids.has_key(id):
-      raise StandardError,"ID %s is already in use" % id
+    if id in self.ids:
+      raise Exception("ID %s is already in use" % id)
     obj = Shell(*args)
     obj.select = 1
     self.ids[id] = len(self.objs)
@@ -362,8 +363,8 @@ class cdata:
   # create cylinder region
 
   def cyl(self,id,*args):
-    if self.ids.has_key(id):
-      raise StandardError,"ID %s is already in use" % id
+    if id in self.ids:
+      raise Exception("ID %s is already in use" % id)
     obj = Cylinder(*args)
     obj.select = 1
     self.ids[id] = len(self.objs)
@@ -376,8 +377,8 @@ class cdata:
   # create a capped-cylinder region
 
   def cap(self,id,*args):
-    if self.ids.has_key(id):
-      raise StandardError,"ID %s is already in use" % id
+    if id in self.ids:
+      raise Exception("ID %s is already in use" % id)
     obj = Capped(*args)
     obj.select = 1
     self.ids[id] = len(self.objs)
@@ -392,19 +393,19 @@ class cdata:
   def q(self,id,*args):
     obj = self.objs[self.ids[id]]
     if obj.style != REGION:
-      raise StandardError,"Can only use q() on a region object"
+      raise Exception("Can only use q() on a region object")
     n = 1
     for arg in args:
       cmd = "obj.q%d = arg" % n
-      exec cmd
+      exec(cmd)
       n += 1
 
   # --------------------------------------------------------------------
   # create a line object with single line
 
   def line(self,id,*args):
-    if self.ids.has_key(id):
-      raise StandardError,"ID %s is already in use" % id
+    if id in self.ids:
+      raise Exception("ID %s is already in use" % id)
     obj = Line()
     obj.select = 1
     self.ids[id] = len(self.objs)
@@ -420,8 +421,8 @@ class cdata:
   # create a line object with 12 lines for a box
 
   def lbox(self,id,*args):
-    if self.ids.has_key(id):
-      raise StandardError,"ID %s is already in use" % id
+    if id in self.ids:
+      raise Exception("ID %s is already in use" % id)
     obj = Line()
     obj.select = 1
     self.ids[id] = len(self.objs)
@@ -449,8 +450,8 @@ class cdata:
   # create a triangulated surface object from a region object
 
   def surf(self,id,id_region):
-    if self.ids.has_key(id):
-      raise StandardError,"ID %s is already in use" % id
+    if id in self.ids:
+      raise Exception("ID %s is already in use" % id)
 
     region = self.objs[self.ids[id_region]]
     region.triangulate()
@@ -472,9 +473,9 @@ class cdata:
   # create a triangulated surface object
   # from list of tri indices (1-N) in id_surf obj
 
-  def surftri(self,id,id_surf,*list):
-    if self.ids.has_key(id):
-      raise StandardError,"ID %s is already in use" % id
+  def surftri(self,id,id_surf,*tlist):
+    if id in self.ids:
+      raise Exception("ID %s is already in use" % id)
 
     o = self.objs[self.ids[id_surf]]
 
@@ -491,7 +492,7 @@ class cdata:
 
     # subtract 1 from tri and vert to convert to C indexing from (1-N)
 
-    for i in list:
+    for i in tlist:
       v1 = o.triangles[i-1][0]
       v2 = o.triangles[i-1][1]
       v3 = o.triangles[i-1][2]
@@ -512,8 +513,8 @@ class cdata:
   # from subset of tris in id_surf obj that meet test string
 
   def surfselect(self,id,id_surf,teststr):
-    if self.ids.has_key(id):
-      raise StandardError,"ID %s is already in use" % id
+    if id in self.ids:
+      raise Exception("ID %s is already in use" % id)
 
     o = self.objs[self.ids[id_surf]]
 
@@ -552,9 +553,13 @@ class cdata:
       v1 = tri[0] - 1
       v2 = tri[1] - 1
       v3 = tri[2] - 1
-      exec ccmd1
-      exec ccmd2
-      exec ccmd3
+      ldict = {'o':o,'v1':v1,'v2':v2,'v3':v3}
+      exec(ccmd1,globals(),ldict)
+      flag1 = ldict['flag1']
+      exec(ccmd2,globals(),ldict)
+      flag2 = ldict['flag2']
+      exec(ccmd3,globals(),ldict)
+      flag3 = ldict['flag3']
       if flag1 and flag2 and flag3:
         obj.vertices.append(o.vertices[v1][:])
         obj.vertices.append(o.vertices[v2][:])
@@ -574,7 +579,7 @@ class cdata:
   def bins(self,id,nx,ny):
     obj = self.objs[self.ids[id]]
     if obj.style != SURFACE:
-      raise StandardError,"Can only set bins for surface"
+      raise Exception("Can only set bins for surface")
     obj.nbinx = nx
     obj.nbiny = ny
 
@@ -583,8 +588,8 @@ class cdata:
   # use inside and outside as constraints on particle coords
 
   def part(self,id,npart,in_id,out_id=None):
-    if self.ids.has_key(id):
-      raise StandardError,"ID %s is already in use" % id
+    if id in self.ids:
+      raise Exception("ID %s is already in use" % id)
 
     obj = Group()
     obj.select = 1
@@ -625,14 +630,14 @@ class cdata:
       count += 1
 
     obj.center()
-    print "Created %d particles in %d attempts" % (count,attempt)
+    print("Created %d particles in %d attempts" % (count,attempt))
 
   # --------------------------------------------------------------------
   # create a group object with npart 2d particles on surface of on_id object
 
   def part2d(self,id,npart,on_id):
-    if self.ids.has_key(id):
-      raise StandardError,"ID %s is already in use" % id
+    if id in self.ids:
+      raise Exception("ID %s is already in use" % id)
 
     obj = Group()
     obj.select = 1
@@ -647,16 +652,16 @@ class cdata:
     on_obj = self.objs[self.ids[on_id]]
     if on_obj.style != SURFACE and on_obj.style != REGION and \
            on_obj.style != UNION:
-      raise StandardError,"Illegal ID to place particles on"
+      raise Exception("Illegal ID to place particles on")
     totalarea = on_obj.area()
 
-    for count in xrange(npart):
+    for count in range(npart):
       area = self.random() * totalarea
       pt,norm = on_obj.loc2d(area,self.random)
       obj.xyz.append(pt)
 
     obj.center()
-    print "Created %d particles on area of %g" % (npart,totalarea)
+    print("Created %d particles on area of %g" % (npart,totalarea))
 
   # --------------------------------------------------------------------
   # create a 3d array of particles
@@ -665,8 +670,8 @@ class cdata:
   # array spacing = dx,dy,dz
 
   def partarray(self,id,nx,ny,nz,x,y,z,dx,dy,dz):
-    if self.ids.has_key(id):
-      raise StandardError,"ID %s is already in use" % id
+    if id in self.ids:
+      raise Exception("ID %s is already in use" % id)
 
     obj = Group()
     obj.select = 1
@@ -678,16 +683,16 @@ class cdata:
     obj.npart = nx * ny * nz
     obj.xyz = []
 
-    for k in xrange(nz):
+    for k in range(nz):
       znew = z + k*dz
-      for j in xrange(ny):
+      for j in range(ny):
         ynew = y + j*dy
-        for i in xrange(nx):
+        for i in range(nx):
           xnew = x + i*dx
           obj.xyz.append([xnew,ynew,znew])
 
     obj.center()
-    print "Created %d particles" % (nx*ny*nz)
+    print("Created %d particles" % (nx*ny*nz))
 
   # --------------------------------------------------------------------
   # create a ring of N particles
@@ -695,8 +700,8 @@ class cdata:
   # ring axis = 'x' or 'y' or 'z'
 
   def partring(self,id,n,x,y,z,r,axis):
-    if self.ids.has_key(id):
-      raise StandardError,"ID %s is already in use" % id
+    if id in self.ids:
+      raise Exception("ID %s is already in use" % id)
 
     obj = Group()
     obj.select = 1
@@ -709,7 +714,7 @@ class cdata:
     obj.xyz = []
 
     deltheta = 2.0*pi / n
-    for i in xrange(n):
+    for i in range(n):
       if axis == 'x':
         xnew = x
         ynew = y + r * cos(i*deltheta)
@@ -725,7 +730,7 @@ class cdata:
       obj.xyz.append([xnew,ynew,znew])
 
     obj.center()
-    print "Created %d particles" % n
+    print("Created %d particles" % n)
 
   # --------------------------------------------------------------------
   # change surface assignment for a 2d group of particles
@@ -733,9 +738,9 @@ class cdata:
   def partsurf(self,id,on_id):
     obj = self.objs[self.ids[id]]
     if obj.style != GROUP:
-      raise StandardError,"Must use particle group with partsurf()"
+      raise Exception("Must use particle group with partsurf()")
     if obj.on_id == "":
-      raise StandardError,"Must use partsurf() with 2d particles"
+      raise Exception("Must use partsurf() with 2d particles")
     obj.on_id = on_id
 
   # --------------------------------------------------------------------
@@ -750,7 +755,7 @@ class cdata:
   def random(self,id):
     obj = self.objs[self.ids[id]]
     if obj.style != SURFACE and obj.style != REGION:
-      raise StandardError,"Must use surf or region with random()"
+      raise Exception("Must use surf or region with random()")
 
     totalarea = obj.area()
     area = self.random() * totalarea
@@ -766,10 +771,10 @@ class cdata:
   def project(self,id,id2,dx,dy,dz,EPS,flag=None):
     obj = self.objs[self.ids[id]]
     if obj.style != GROUP:
-      raise StandardError,"Must use particle group as 1st obj of project()"
+      raise Exception("Must use particle group as 1st obj of project()")
     obj_on = self.objs[self.ids[id2]]
     if obj_on.style != SURFACE and obj_on.style != REGION:
-      raise StandardError,"Must use surf or region as 2nd obj of project()"
+      raise Exception("Must use surf or region as 2nd obj of project()")
 
     # pre-process SURFACE to bin its triangles for faster searching
 
@@ -783,7 +788,7 @@ class cdata:
     factor = 2
     maxscale = 10.0
 
-    for i in xrange(obj.npart):
+    for i in range(obj.npart):
       x,y,z = obj.xyz[i]
       if flag: dir = [dx-x,dy-y,dz-z]
       else: dir = [dx,dy,dz]
@@ -814,7 +819,7 @@ class cdata:
         scale *= factor
 
       if bracket == start:
-        raise StandardError,"Could not find bracket point for particle %d" % i
+        raise Exception("Could not find bracket point for particle %d" % i)
 
       # bisection search to zoom in to within EPS of surface
       # separation = distance between 2 points
@@ -846,7 +851,7 @@ class cdata:
   def center(self,id,x,y,z):
     obj = self.objs[self.ids[id]]
     if obj.style != SURFACE and obj.style != GROUP:
-      raise StandardError,"Can only use center() on a surface or group object"
+      raise Exception("Can only use center() on a surface or group object")
     obj.center(x,y,z)
 
   # --------------------------------------------------------------------
@@ -856,7 +861,7 @@ class cdata:
   def trans(self,id,dx,dy,dz):
     obj = self.objs[self.ids[id]]
     if obj.style != SURFACE and obj.style != GROUP:
-      raise StandardError,"Can only use trans() on a surface or group object"
+      raise Exception("Can only use trans() on a surface or group object")
     obj.xc += dx
     obj.yc += dy
     obj.zc += dz
@@ -864,12 +869,12 @@ class cdata:
     # apply translation to each vertex or part coord
 
     if obj.style == SURFACE:
-      for i in xrange(obj.nvert):
+      for i in range(obj.nvert):
         obj.vertices[i][0] += dx
         obj.vertices[i][1] += dy
         obj.vertices[i][2] += dz
     elif obj.style == GROUP:
-      for i in xrange(obj.npart):
+      for i in range(obj.npart):
         obj.xyz[i][0] += dx
         obj.xyz[i][1] += dy
         obj.xyz[i][2] += dz
@@ -886,7 +891,7 @@ class cdata:
   def rotate(self,id,axis1,i1,j1,k1,axis2,i2,j2,k2):
     obj = self.objs[self.ids[id]]
     if obj.style != SURFACE and obj.style != GROUP:
-      raise StandardError,"Can only use rotate() on a surface or group object"
+      raise Exception("Can only use rotate() on a surface or group object")
 
     # create xyz old and new
 
@@ -894,15 +899,15 @@ class cdata:
     if axis1 == 'x': xnew = [i1,j1,k1]
     elif axis1 == 'y': ynew = [i1,j1,k1]
     elif axis1 == 'z': znew = [i1,j1,k1]
-    else: raise StandardError,"Illegal rotate arguments"
+    else: raise Exception("Illegal rotate arguments")
     if axis2 == 'x': xnew = [i2,j2,k2]
     elif axis2 == 'y': ynew = [i2,j2,k2]
     elif axis2 == 'z': znew = [i2,j2,k2]
-    else: raise StandardError,"Illegal rotate arguments"
+    else: raise Exception("Illegal rotate arguments")
     if not xnew: xnew = cross(ynew,znew)
     elif not ynew: ynew = cross(znew,xnew)
     elif not znew: znew = cross(xnew,ynew)
-    else: raise StandardError,"Illegal rotate arguments"
+    else: raise Exception("Illegal rotate arguments")
     normalize(xnew)
     normalize(ynew)
     normalize(znew)
@@ -910,7 +915,7 @@ class cdata:
     # apply rotation matrix of direction cosines to each vertex or part coord
 
     if obj.style == SURFACE:
-      for i in xrange(obj.nvert):
+      for i in range(obj.nvert):
         x = obj.vertices[i][0] - obj.xc
         y = obj.vertices[i][1] - obj.yc
         z = obj.vertices[i][2] - obj.zc
@@ -921,7 +926,7 @@ class cdata:
         obj.vertices[i][1] = yn + obj.yc
         obj.vertices[i][2] = zn + obj.zc
     elif obj.style == GROUP:
-      for i in xrange(obj.npart):
+      for i in range(obj.npart):
         x = obj.xyz[i][0] - obj.xc
         y = obj.xyz[i][1] - obj.yc
         z = obj.xyz[i][2] - obj.zc
@@ -939,14 +944,14 @@ class cdata:
   def scale(self,id,sx,sy,sz):
     obj = self.objs[self.ids[id]]
     if obj.style != SURFACE and obj.style != GROUP:
-      raise StandardError,"Can only use scale() on a surface or group object"
+      raise Exception("Can only use scale() on a surface or group object")
     if obj.style == SURFACE:
-      for i in xrange(obj.nvert):
+      for i in range(obj.nvert):
         obj.vertices[i][0] = obj.xc + sx * (obj.vertices[i][0] - obj.xc)
         obj.vertices[i][1] = obj.yc + sy * (obj.vertices[i][1] - obj.yc)
         obj.vertices[i][2] = obj.zc + sz * (obj.vertices[i][2] - obj.zc)
     elif obj.style == GROUP:
-      for i in xrange(obj.npart):
+      for i in range(obj.npart):
         obj.xyz[i][0] = obj.xc + sx * (obj.xyz[i][0] - obj.xc)
         obj.xyz[i][1] = obj.yc + sy * (obj.xyz[i][1] - obj.yc)
         obj.xyz[i][2] = obj.zc + sz * (obj.xyz[i][2] - obj.zc)
@@ -954,10 +959,10 @@ class cdata:
   # --------------------------------------------------------------------
   # create union object from list of other objects
 
-  def union(self,id,*list):
-    if self.ids.has_key(id):
-      raise StandardError,"ID %s is already in use" % id
-    obj = Union(self.ids,self.objs,*list)
+  def union(self,id,*objlist):
+    if id in self.ids:
+      raise Exception("ID %s is already in use" % id)
+    obj = Union(self.ids,self.objs,*objlist)
     obj.select = 1
     self.ids[id] = len(self.objs)
     self.objs.append(obj)
@@ -968,12 +973,12 @@ class cdata:
   # join objects in list to form a new object
   # only possible for group, surface, line objects
 
-  def join(self,id,*list):
-    style = self.objs[self.ids[list[0]]].style
+  def join(self,id,*objlist):
+    style = self.objs[self.ids[objlist[0]]].style
     if style == GROUP: obj = Group()
     elif style == SURFACE: obj = Surface()
     elif style == LINE: obj = Line()
-    else: raise StandardError,"Cannot perform join on these object styles"
+    else: raise Exception("Cannot perform join on these object styles")
     obj.select = 1
     self.ids[id] = len(self.objs)
     self.objs.append(obj)
@@ -981,7 +986,7 @@ class cdata:
     obj.style = style
 
     if style == GROUP:
-      obj.on_id = self.objs[self.ids[list[0]]].on_id
+      obj.on_id = self.objs[self.ids[objlist[0]]].on_id
       obj.npart = 0
       obj.xyz = []
     elif style == SURFACE:
@@ -993,17 +998,17 @@ class cdata:
       obj.nline = 0
       obj.pairs = []
 
-    for id in list:
+    for id in objlist:
       o = self.objs[self.ids[id]]
       if o.style != style:
-        raise StandardError,"All joined objects must be of same style"
+        raise Exception("All joined objects must be of same style")
 
       # force deep copy of particle coords
 
       if style == GROUP:
         if o.on_id != obj.on_id:
-          raise StandardError,"Particle group surfaces do not match"
-        for i in xrange(o.npart):
+          raise Exception("Particle group surfaces do not match")
+        for i in range(o.npart):
           xyz = o.xyz[i][:]
           obj.xyz.append(xyz)
         obj.npart += o.npart
@@ -1013,10 +1018,10 @@ class cdata:
       # increment vertex and triangle indices b/c now have previous surfaces
 
       elif style == SURFACE:
-        for i in xrange(o.nvert):
+        for i in range(o.nvert):
           vert = o.vertices[i][:]
           obj.vertices.append(vert)
-        for i in xrange(o.ntri):
+        for i in range(o.ntri):
           tri = [iv+obj.nvert for iv in o.triangles[i]]
           obj.triangles.append(tri)
           connect = o.connections[i][:]
@@ -1039,12 +1044,12 @@ class cdata:
   # delete each object in list
   # reset values in ids since some indices are decremented
 
-  def delete(self,*list):
-    for id in list:
+  def delete(self,*objlist):
+    for id in objlist:
       i = self.ids[id]
       del self.ids[id]
       del self.objs[i]
-      for key in self.ids.keys():
+      for key in list(self.ids.keys()):
         j = self.ids[key]
         if j > i: self.ids[key] = j-1
 
@@ -1054,8 +1059,8 @@ class cdata:
 
   def rename(self,idold,idnew):
     i = self.ids[idold]
-    if self.ids.has_key(idnew):
-      raise StandardError,"ID %s is already in use" % id
+    if idnew in self.ids:
+      raise Exception("ID %s is already in use" % id)
     self.ids[idnew] = i
     self.objs[i].id = idnew
     del self.ids[idold]
@@ -1067,8 +1072,8 @@ class cdata:
   def copy(self,idold,idnew):
     obj = deepcopy(self.objs[self.ids[idold]])
     obj.select = 1
-    if self.ids.has_key(idnew):
-      raise StandardError,"ID %s is already in use" % id
+    if idnew in self.ids:
+      raise Exception("ID %s is already in use" % id)
     self.ids[idnew] = len(self.objs)
     self.objs.append(obj)
     obj.id = idnew
@@ -1077,9 +1082,9 @@ class cdata:
   # set selection flag for each object in list
   # if list is empty, select all
 
-  def select(self,*list):
-    if len(list) == 0: list = self.ids.keys()
-    for id in list:
+  def select(self,*objlist):
+    if len(objlist) == 0: objlist = list(self.ids.keys())
+    for id in objlist:
       obj = self.objs[self.ids[id]]
       obj.select = 1
 
@@ -1087,9 +1092,9 @@ class cdata:
   # unset selection flag for each object in list
   # if list is empty, unselect all
 
-  def unselect(self,*list):
-    if len(list) == 0: list = self.ids.keys()
-    for id in list:
+  def unselect(self,*objlist):
+    if len(objlist) == 0: objlist = list(self.ids.keys())
+    for id in objlist:
       obj = self.objs[self.ids[id]]
       obj.select = 0
 
@@ -1097,11 +1102,11 @@ class cdata:
   # write out list of objects to data file via filewrite()
   # open a new file
 
-  def write(self,file,*list):
-    if not len(list): vlist = range(len(self.objs))
+  def write(self,file,*objlist):
+    if not len(objlist): vlist = list(range(len(self.objs)))
     else:
       vlist = []
-      for id in list: vlist.append(self.ids[id])
+      for id in objlist: vlist.append(self.ids[id])
 
     fp = open(file,'w')
     self.filewrite(fp,vlist)
@@ -1111,11 +1116,11 @@ class cdata:
   # append list of objects to data file via filewrite()
   # open existing file for appending
 
-  def append(self,file,*list):
-    if not len(list): vlist = range(len(self.objs))
+  def append(self,file,*objlist):
+    if not len(objlist): vlist = list(range(len(self.objs)))
     else:
       vlist = []
-      for id in list: vlist.append(self.ids[id])
+      for id in objlist: vlist.append(self.ids[id])
 
     fp = open(file,'a')
     self.filewrite(fp,vlist)
@@ -1131,30 +1136,30 @@ class cdata:
       if not obj.select: continue
       if obj.style == GROUP:
         if not obj.on_id:
-          print >>fp,"particles %s %d" % (obj.id,obj.npart)
+          print("particles %s %d" % (obj.id,obj.npart), file=fp)
         else:
-          print >>fp,"particles %s %d %s" % (obj.id,obj.npart,obj.on_id)
-        print >>fp
-        for i in xrange(obj.npart):
-          print >>fp,i+1,obj.xyz[i][0],obj.xyz[i][1],obj.xyz[i][2]
-        print >>fp
+          print("particles %s %d %s" % (obj.id,obj.npart,obj.on_id), file=fp)
+        print(file=fp)
+        for i in range(obj.npart):
+          print(i+1,obj.xyz[i][0],obj.xyz[i][1],obj.xyz[i][2], file=fp)
+        print(file=fp)
       if obj.style == SURFACE:
-        print >>fp,"triangles %s %d %d" % (obj.id,obj.nvert,obj.ntri)
-        print >>fp
-        for i in xrange(obj.nvert):
-          print >>fp,i+1,obj.vertices[i][0],obj.vertices[i][1], \
-                obj.vertices[i][2]
-        print >>fp
-        for i in xrange(obj.ntri):
-          print >>fp,i+1,obj.triangles[i][0],obj.triangles[i][1], \
-                obj.triangles[i][2]
-        print >>fp
-        for i in xrange(obj.ntri):
-          print >>fp,i+1,obj.connections[i][0],obj.connections[i][1], \
+        print("triangles %s %d %d" % (obj.id,obj.nvert,obj.ntri), file=fp)
+        print(file=fp)
+        for i in range(obj.nvert):
+          print(i+1,obj.vertices[i][0],obj.vertices[i][1], \
+                obj.vertices[i][2], file=fp)
+        print(file=fp)
+        for i in range(obj.ntri):
+          print(i+1,obj.triangles[i][0],obj.triangles[i][1], \
+                obj.triangles[i][2], file=fp)
+        print(file=fp)
+        for i in range(obj.ntri):
+          print(i+1,obj.connections[i][0],obj.connections[i][1], \
                 obj.connections[i][2],obj.connections[i][3], \
-                obj.connections[i][4],obj.connections[i][5]
+                obj.connections[i][4],obj.connections[i][5], file=fp)
       if obj.style == REGION:
-        print >>fp,"region %s" % obj.command()
+        print("region %s" % obj.command(), file=fp)
 
   # --------------------------------------------------------------------
   # iterator called from other tools
@@ -1168,7 +1173,7 @@ class cdata:
 
   def viz(self,isnap):
     if isnap:
-      raise StandardError, "cannot call cdata.viz() with isnap != 0"
+      raise Exception("cannot call cdata.viz() with isnap != 0")
 
     # create atom list from sum of all particle groups
     # id = running count
@@ -1227,7 +1232,7 @@ class cdata:
 
   def findtime(self,n):
     if n == 0: return 0
-    raise StandardError, "no step %d exists" % (n)
+    raise Exception("no step %d exists" % (n))
 
   # --------------------------------------------------------------------
   # return box size
@@ -1285,7 +1290,7 @@ class Random:
     self.seed = seed
 
   def __call__(self):
-    k = self.seed/IQ
+    k = self.seed//IQ
     self.seed = IA*(self.seed-k*IQ) - IR*k
     if self.seed < 0: self.seed += IM
     return AM*self.seed
@@ -1344,16 +1349,16 @@ class Surface:
     self.dxinv = 1.0 / (xsize / self.nbinx + EPSILON)
     self.dyinv = 1.0 / (ysize / self.nbiny + EPSILON)
 
-    print "Binning %d triangles into %d by %d bins ..." % \
-          (self.ntri,self.nbinx,self.nbiny)
+    print("Binning %d triangles into %d by %d bins ..." % \
+          (self.ntri,self.nbinx,self.nbiny))
 
     self.bin = []
-    for i in xrange(self.nbinx):
+    for i in range(self.nbinx):
       self.bin.append(self.nbiny*[0])
-      for j in xrange(self.nbiny):
+      for j in range(self.nbiny):
         self.bin[i][j] = []
 
-    for m in xrange(self.ntri):
+    for m in range(self.ntri):
       v1 = self.vertices[self.triangles[m][0]-1]
       v2 = self.vertices[self.triangles[m][1]-1]
       v3 = self.vertices[self.triangles[m][2]-1]
@@ -1365,11 +1370,11 @@ class Surface:
       ihi = int((xmax - self.xlo) * self.dxinv)
       jlo = int((ymin - self.ylo) * self.dyinv)
       jhi = int((ymax - self.ylo) * self.dyinv)
-      for i in xrange(ilo,ihi+1):
-        for j in xrange(jlo,jhi+1):
+      for i in range(ilo,ihi+1):
+        for j in range(jlo,jhi+1):
           self.bin[i][j].append(m)
 
-    print "Done with binning"
+    print("Done with binning")
 
   # check for inside assumes that surf is a closed set of triangles
   # consider a line segment from x,y,z to x,y,INF
@@ -1390,7 +1395,7 @@ class Surface:
     n = len(self.bin[ix][iy])
 
     hit = 0
-    for m in xrange(n):
+    for m in range(n):
       itri = self.bin[ix][iy][m]
       tri = self.triangles[itri]
 
@@ -1465,7 +1470,7 @@ class Surface:
   # return a random location on one of triangles
 
   def loc2d(self,area,random):
-    for i in xrange(self.ntri):
+    for i in range(self.ntri):
       if area < self.areas[i]: break
     v1 = self.vertices[self.triangles[i][0]-1]
     v2 = self.vertices[self.triangles[i][1]-1]
@@ -1479,23 +1484,23 @@ class Surface:
     x = v1[0] + r1*(v2[0] - v1[0]) + r2*(v3[0] - v2[0])
     y = v1[1] + r1*(v2[1] - v1[1]) + r2*(v3[1] - v2[1])
     z = v1[2] + r1*(v2[2] - v1[2]) + r2*(v3[2] - v2[2])
-    list = v1 + v2 + v3
-    return [x,y,z],normal(list[0:3],list[3:6],list[6:9])
+    vlist = v1 + v2 + v3
+    return [x,y,z],normal(vlist[0:3],vlist[3:6],vlist[6:9])
 
 # --------------------------------------------------------------------
 # group of particles
 
 class Group:
   def bbox(self):
-    list = [xyz[0] for xyz in self.xyz]
-    xlo = min(list)
-    xhi = max(list)
-    list = [xyz[1] for xyz in self.xyz]
-    ylo = min(list)
-    yhi = max(list)
-    list = [xyz[2] for xyz in self.xyz]
-    zlo = min(list)
-    zhi = max(list)
+    xyzlist = [xyz[0] for xyz in self.xyz]
+    xlo = min(xyzlist)
+    xhi = max(xyzlist)
+    xyzlist = [xyz[1] for xyz in self.xyz]
+    ylo = min(xyzlist)
+    yhi = max(xyzlist)
+    xyzlist = [xyz[2] for xyz in self.xyz]
+    zlo = min(xyzlist)
+    zhi = max(xyzlist)
 
     return (xlo,ylo,zlo,xhi,yhi,zhi)
 
@@ -1516,13 +1521,13 @@ class Group:
 # box region
 
 class Box:
-  def __init__(self,*list):
-    self.xlo = float(list[0])
-    self.ylo = float(list[1])
-    self.zlo = float(list[2])
-    self.xhi = float(list[3])
-    self.yhi = float(list[4])
-    self.zhi = float(list[5])
+  def __init__(self,*blist):
+    self.xlo = float(blist[0])
+    self.ylo = float(blist[1])
+    self.zlo = float(blist[2])
+    self.xhi = float(blist[3])
+    self.yhi = float(blist[4])
+    self.zhi = float(blist[5])
     self.q1 = self.q2 = self.q3 = 1
 
   # bounding box around region
@@ -1548,13 +1553,13 @@ class Box:
     self.nvert = len(vertices)
     self.ntri = len(triangles)
     self.vertices = []
-    for i in xrange(self.nvert):
+    for i in range(self.nvert):
       v1 = self.xlo + vertices[i][0]*(self.xhi-self.xlo)
       v2 = self.ylo + vertices[i][1]*(self.yhi-self.ylo)
       v3 = self.zlo + vertices[i][2]*(self.zhi-self.zlo)
       self.vertices.append([v1,v2,v3])
     self.triangles = []
-    for i in xrange(self.ntri):
+    for i in range(self.ntri):
       self.triangles.append([triangles[i][0],triangles[i][1],triangles[i][2]])
     self.connections = connect(self.nvert,self.ntri,self.triangles)
 
@@ -1610,11 +1615,11 @@ class Box:
 # sphere region
 
 class Sphere:
-  def __init__(self,*list):
-    self.x = float(list[0])
-    self.y = float(list[1])
-    self.z = float(list[2])
-    self.r = float(list[3])
+  def __init__(self,*slist):
+    self.x = float(slist[0])
+    self.y = float(slist[1])
+    self.z = float(slist[2])
+    self.r = float(slist[3])
     self.rsq = self.r*self.r
     self.q1 = 2
 
@@ -1645,7 +1650,7 @@ class Sphere:
     self.nvert = len(vertices)
     self.ntri = len(triangles)
     self.vertices = []
-    for i in xrange(self.nvert):
+    for i in range(self.nvert):
       v1 = vertices[i][0] - 0.5
       v2 = vertices[i][1] - 0.5
       v3 = vertices[i][2] - 0.5
@@ -1656,7 +1661,7 @@ class Sphere:
       c[2] = self.z + self.r*c[2]
       self.vertices.append(c)
     self.triangles = []
-    for i in xrange(self.ntri):
+    for i in range(self.ntri):
       self.triangles.append([triangles[i][0],triangles[i][1],triangles[i][2]])
     self.connections = connect(self.nvert,self.ntri,self.triangles)
 
@@ -1689,8 +1694,8 @@ class Sphere:
 # loc2d is only only outer surface, inherited from Sphere
 
 class Shell(Sphere):
-  def __init__(self,*list):
-    self.rinner = float(list[4])
+  def __init__(self,*slist):
+    self.rinner = float(slist[4])
     self.innersq = self.rinner*self.rinner
 
   def inside(self,x,y,z):
@@ -1709,13 +1714,13 @@ class Shell(Sphere):
 # cylinder region
 
 class Cylinder:
-  def __init__(self,*list):
-    self.axis = list[0]
-    self.c1 = list[1]
-    self.c2 = list[2]
-    self.r = list[3]
-    self.lo = list[4]
-    self.hi = list[5]
+  def __init__(self,*clist):
+    self.axis = clist[0]
+    self.c1 = clist[1]
+    self.c2 = clist[2]
+    self.r = clist[3]
+    self.lo = clist[4]
+    self.hi = clist[5]
     self.rsq = self.r*self.r
     self.q1 = 2
     self.q2 = 1
@@ -1764,7 +1769,7 @@ class Cylinder:
     self.nvert = len(vertices)
     self.ntri = len(triangles)
     self.vertices = []
-    for i in xrange(self.nvert):
+    for i in range(self.nvert):
       v1 = vertices[i][0] - 0.5
       v2 = vertices[i][1] - 0.5
       v3 = vertices[i][2]
@@ -1781,7 +1786,7 @@ class Cylinder:
       elif self.axis == 'y': self.vertices.append([p1,p3,p2])
       elif self.axis == 'z': self.vertices.append([p1,p2,p3])
     self.triangles = []
-    for i in xrange(self.ntri):
+    for i in range(self.ntri):
       self.triangles.append([triangles[i][0],triangles[i][1],triangles[i][2]])
     self.connections = connect(self.nvert,self.ntri,self.triangles)
 
@@ -1852,13 +1857,13 @@ class Cylinder:
 # capped-cylinder region
 
 class Capped:
-  def __init__(self,*list):
-    self.axis = list[0]
-    self.c1 = list[1]
-    self.c2 = list[2]
-    self.r = list[3]
-    self.lo = list[4]
-    self.hi = list[5]
+  def __init__(self,*clist):
+    self.axis = clist[0]
+    self.c1 = clist[1]
+    self.c2 = clist[2]
+    self.r = clist[3]
+    self.lo = clist[4]
+    self.hi = clist[5]
     self.rsq = self.r*self.r
     self.q1 = 2
     self.q2 = 1
@@ -1908,14 +1913,14 @@ class Capped:
   # convert tuples returned by box_triangluate (used for dict lookup) to lists
 
   def triangulate(self):
-    if self.q1 % 2: raise StandardError,"Capped cylinder q1 must be even"
+    if self.q1 % 2: raise Exception("Capped cylinder q1 must be even")
     vertices,triangles = box_triangulate(self.q1,self.q1,self.q2+self.q1)
     self.nvert = len(vertices)
     self.ntri = len(triangles)
     self.vertices = []
     cutlo = self.q1/2 * 1.0/(self.q2+self.q1) + EPSILON
     cuthi = 1.0 - cutlo
-    for i in xrange(self.nvert):
+    for i in range(self.nvert):
       v1 = vertices[i][0]
       v2 = vertices[i][1]
       v3 = vertices[i][2]
@@ -1941,7 +1946,7 @@ class Capped:
       elif self.axis == 'y': self.vertices.append([p1,p3,p2])
       elif self.axis == 'z': self.vertices.append([p1,p2,p3])
     self.triangles = []
-    for i in xrange(self.ntri):
+    for i in range(self.ntri):
       self.triangles.append([triangles[i][0],triangles[i][1],triangles[i][2]])
     self.connections = connect(self.nvert,self.ntri,self.triangles)
 
@@ -2031,18 +2036,18 @@ class Capped:
 
 class Line:
   def bbox(self):
-    list = [pair[0] for pair in self.pairs]
-    list += [pair[3] for pair in self.pairs]
-    xlo = min(list)
-    xhi = max(list)
-    list = [pair[1] for pair in self.pairs]
-    list += [pair[4] for pair in self.pairs]
-    ylo = min(list)
-    yhi = max(list)
-    list = [pair[2] for pair in self.pairs]
-    list += [pair[5] for pair in self.pairs]
-    zlo = min(list)
-    zhi = max(list)
+    plist = [pair[0] for pair in self.pairs]
+    plist += [pair[3] for pair in self.pairs]
+    xlo = min(plist)
+    xhi = max(plist)
+    plist = [pair[1] for pair in self.pairs]
+    plist += [pair[4] for pair in self.pairs]
+    ylo = min(plist)
+    yhi = max(plist)
+    plist = [pair[2] for pair in self.pairs]
+    plist += [pair[5] for pair in self.pairs]
+    zlo = min(plist)
+    zhi = max(plist)
     return (xlo,ylo,zlo,xhi,yhi,zhi)
 
   def addline(self,coords):
@@ -2054,12 +2059,12 @@ class Line:
 # self.objs = list of child objects
 
 class Union:
-  def __init__(self,ids,objs,*list):
+  def __init__(self,ids,objs,*ulist):
     self.objs = []
-    for id in list:
+    for id in ulist:
       obj = objs[ids[id]]
       if obj.style != SURFACE and obj.style != REGION and obj.style != UNION:
-        raise StandardError,"Union child object is of invalid style"
+        raise Exception("Union child object is of invalid style")
       self.objs.append(obj)
 
   # bounding box around all child objects
@@ -2098,7 +2103,7 @@ class Union:
   # return a random location on surface of one of child objects
 
   def loc2d(self,area,random):
-    for i in xrange(len(self.objs)):
+    for i in range(len(self.objs)):
       if area < self.areas[i]: break
     if i > 0: area -= self.areas[i]
     return self.objs[i].loc2d(area,random)
@@ -2158,15 +2163,15 @@ def connect(nvert,ntri,triangles):
   # create inverted v2tri where each vertex has list of triangles it is in
 
   v2tri = []
-  for i in xrange(nvert): v2tri.append([]);
+  for i in range(nvert): v2tri.append([]);
 
-  for i in xrange(ntri):
+  for i in range(ntri):
     for vert in triangles[i]: v2tri[vert-1].append(i)
 
   # loop over triangles to reset connections
 
   connections = []
-  for i in xrange(ntri):
+  for i in range(ntri):
 
     # zero connections
 
@@ -2223,7 +2228,7 @@ def connect(nvert,ntri,triangles):
 # return index of where v is in vertices list
 
 def vertex(v,vertices,vdict):
-  if vdict.has_key(v): return vdict[v]
+  if v in vdict: return vdict[v]
   n = len(vertices)
   vertices.append(v)
   vdict[v] = n
@@ -2241,8 +2246,8 @@ def box_triangulate(q1,q2,q3):
   vdict = {}
   vertices = []
   triangles = []
-  for j in xrange(q2):
-    for k in xrange(q3):
+  for j in range(q2):
+    for k in range(q3):
       v1 = (0, j*dy,     k*dz)
       v2 = (0, (j+1)*dy, k*dz)
       v3 = (0, (j+1)*dy, (k+1)*dz)
@@ -2263,8 +2268,8 @@ def box_triangulate(q1,q2,q3):
       iv4 = vertex(v4,vertices,vdict)
       triangles.append([iv1+1,iv2+1,iv3+1])
       triangles.append([iv1+1,iv3+1,iv4+1])
-  for i in xrange(q1):
-    for k in xrange(q3):
+  for i in range(q1):
+    for k in range(q3):
       v1 = (i*dx,     0, k*dz)
       v2 = ((i+1)*dx, 0, k*dz)
       v3 = ((i+1)*dx, 0, (k+1)*dz)
@@ -2285,8 +2290,8 @@ def box_triangulate(q1,q2,q3):
       iv4 = vertex(v4,vertices,vdict)
       triangles.append([iv1+1,iv3+1,iv2+1])
       triangles.append([iv1+1,iv4+1,iv3+1])
-  for i in xrange(q1):
-    for j in xrange(q2):
+  for i in range(q1):
+    for j in range(q2):
       v1 = (i*dx,     j*dy,     0)
       v2 = ((i+1)*dx, j*dy,     0)
       v3 = ((i+1)*dx, (j+1)*dy, 0)
