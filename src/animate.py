@@ -12,7 +12,10 @@
 
 from __future__ import absolute_import
 import sys, os, subprocess, re, glob
-from tkinter import *
+try:
+  from Tkinter import *
+except ImportError:
+  from tkinter import *
 
 oneline = "Animate a series of image files"
 

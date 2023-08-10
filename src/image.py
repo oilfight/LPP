@@ -13,7 +13,10 @@
 from __future__ import absolute_import
 import sys, os, subprocess, re, glob
 from math import *
-from tkinter import *
+try:
+  from Tkinter import *
+except ImportError:
+  from tkinter import *
 import Pmw
 from PIL import Image
 

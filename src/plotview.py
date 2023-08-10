@@ -12,7 +12,10 @@
 
 from __future__ import absolute_import
 import sys, re, glob, time
-from tkinter import *
+try:
+  from Tkinter import *
+except ImportError:
+  from tkinter import *
 
 oneline = "Plot multiple vectors from a data set"
 
