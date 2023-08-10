@@ -8,6 +8,9 @@
 
 # vtk tool
 
+from __future__ import print_function, absolute_import
+import sys, re
+
 oneline = "Convert LAMMPS snapshots to VTK format"
 
 docstr = """
@@ -33,8 +36,6 @@ v.single(N,"file")      write snapshot for timestep N to file.vtk
 #   data = data file to read from
 
 # Imports and external programs
-
-import sys, re
 
 # Class definition
 

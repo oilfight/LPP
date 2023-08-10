@@ -10,8 +10,12 @@
 
 # Imports and external programs
 
-from __future__ import absolute_import
-import sys, types, glob, urllib.request, urllib.parse, urllib.error
+from __future__ import print_function, absolute_import
+import sys, types, glob
+try:
+  import urllib.request, urllib.parse, urllib.error
+except ImportError:
+  import urllib
 
 oneline = "Read, write PDB files in combo with LAMMPS snapshots"
 

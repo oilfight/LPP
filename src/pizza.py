@@ -17,7 +17,7 @@
 
 # modules needed by pizza.py
 
-from __future__ import absolute_import
+from __future__ import print_function, absolute_import
 import sys, subprocess, os, string, glob, re
 import time
 

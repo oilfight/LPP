@@ -10,6 +10,8 @@
 
 # Imports and external programs
 
+from __future__ import absolute_import
+
 from math import sin,cos,sqrt,pi,acos
 from OpenGL.Tk import *
 from OpenGL.GLUT import *

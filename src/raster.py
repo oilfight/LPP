@@ -10,7 +10,7 @@
 
 # Imports and external programs
 
-from __future__ import absolute_import
+from __future__ import print_function, absolute_import
 import sys, os, subprocess, re
 from vizinfo import vizinfo
 from math import fabs,atan,cos,sin
