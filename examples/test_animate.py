@@ -11,4 +11,4 @@ a.next()
 a.previous()
 a.frame(1)
 
-print "all done ... type CTRL-D to exit Pizza.py"
+print("all done ... type CTRL-D to exit Pizza.py")

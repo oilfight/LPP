@@ -1,6 +1,6 @@
 # movie of melting LJ solid
 
-a = dump("dump.melt")
+a = dump("files/dump.melt")
 a.tselect.test("$t == 0")
 a.scale()
 a.set("$ix = int($x * 4)")

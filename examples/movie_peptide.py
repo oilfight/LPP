@@ -1,8 +1,8 @@
 # movie of solvated peptide data
 
-d = dump("dump.peptide")
+d = dump("files/dump.peptide")
 d.unwrap()
-p = pdb("peptide",d)
-r.file = "peptide"
+p = pdbfile("files/peptide",d)
+
 r = rasmol(p)
 r.all()

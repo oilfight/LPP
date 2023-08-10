@@ -1,6 +1,6 @@
 # movie of triangular particle data
 
-d = dump("dump.tri")
+d = dump("files/dump.tri")
 d.set("$center = ((int($id)-1)/36+1)*36")
 d.owrap("center")
 
