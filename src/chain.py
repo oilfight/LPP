@@ -144,7 +144,7 @@ class chain:
           idmol = imonomer + 1
         elif self.id == "end2":
           idmol = imonomer + 1
-          if idmol > nper/2:
+          if idmol > nper//2:
             idmol = nper - imonomer
         else:
           raise Exception("chain ID is not a valid value")
