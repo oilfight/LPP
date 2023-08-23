@@ -444,8 +444,8 @@ class gl:
   # --------------------------------------------------------------------
 
   def shift(self,x,y):
-    self.xshift = x;
-    self.yshift = y;
+    self.xshift = x
+    self.yshift = y
     self.setview()
     self.w.tkRedraw()
 
