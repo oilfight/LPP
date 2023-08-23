@@ -164,13 +164,13 @@ class chain:
       raise Exception("%d monomers instead of requested %d" % \
                            (len(self.atoms),self.n))
 
-    list = [atom[2] for atom in self.atoms]
-    atypes = max(list)
+    atlist = [atom[2] for atom in self.atoms]
+    atypes = max(atlist)
 
     btypes = 0
     if len(self.bonds):
-      list = [bond[1] for bond in self.bonds]
-      btypes = max(list)
+      btlist = [bond[1] for bond in self.bonds]
+      btypes = max(btlist)
 
     # create the data file
 
